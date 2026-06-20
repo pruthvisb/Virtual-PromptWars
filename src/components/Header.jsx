@@ -28,15 +28,15 @@ export default function Header({ activeTab, onOpenTests }) {
           title: 'AI Sustainability Coach',
           subtitle: 'Ask your coach climate questions and generate tailored weekly action agendas.'
         };
-      case 'community':
+      case 'sandbox':
         return {
-          title: 'Citizen Feed & Leagues',
-          subtitle: 'Collaborate on neighborhood co-op quests, applaud friends, and view leaderboards.'
+          title: 'Climate Foresight Sandbox',
+          subtitle: 'Model future climate scenarios by adjusting policy dials and simulating Net Zero timelines.'
         };
-      case 'marketplace':
+      case 'sink':
         return {
-          title: 'Carbon Marketplace & Offsets',
-          subtitle: 'Redeem rewards and support verified carbon offset programs.'
+          title: 'DAC Oasis Carbon Sink',
+          subtitle: 'Directly extract CO₂ from the atmosphere in real-time using our personal air capture modules.'
         };
       default:
         return {
@@ -64,6 +64,10 @@ export default function Header({ activeTab, onOpenTests }) {
         >
           🧪 Run Tests
         </button>
+
+        <div className="stat-pill co2-captured" title="CO₂ extracted from air by DAC Oasis (grams)" style={{ background: 'rgba(0, 255, 135, 0.15)', border: '1px solid rgba(0, 255, 135, 0.3)', color: '#00FF87' }}>
+          💨 <span className="user-captured-val" style={{ fontWeight: 'bold' }}>{state.co2Captured.toFixed(1)}</span> g
+        </div>
 
         <div className="stat-pill points" title="EcoPoints earned by logging green actions">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8" strokeLinecap="round" strokeWidth="2"/></svg>

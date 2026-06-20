@@ -2404,3 +2404,343 @@ input[type="range"]::-webkit-slider-thumb:hover {
     bottom: 5rem;
   }
 }
+
+/* ==========================================================================
+   Climate Foresight Sandbox & DAC Oasis Styles
+   ========================================================================== */
+
+.sandbox-layout, .sink-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  width: 100%;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.sandbox-grid, .sink-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2rem;
+  align-items: stretch;
+}
+
+.glass-panel {
+  background: rgba(10, 15, 20, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 2.2rem;
+  box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.45);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, #00FF87, #06b6d4);
+  opacity: 0.8;
+}
+
+.panel-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+  font-family: var(--font-heading);
+}
+
+.panel-description {
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2rem;
+  line-height: 1.45;
+}
+
+/* Custom Range Sliders */
+.sliders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.8rem;
+}
+
+.slider-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.slider-label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.slider-value {
+  color: #00FF87;
+  text-shadow: 0 0 8px rgba(0, 255, 135, 0.35);
+  font-family: monospace;
+  font-size: 1.1rem;
+}
+
+.custom-range {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  transition: background 0.3s;
+}
+
+.custom-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #00FF87;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(0, 255, 135, 0.6);
+  transition: transform 0.1s;
+}
+
+.custom-range::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.slider-help {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.35;
+}
+
+/* Chart Panel */
+.chart-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.zero-crossing-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.badge-label {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-val {
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-top: 0.2rem;
+}
+
+.text-neon {
+  color: #00FF87;
+  text-shadow: 0 0 15px rgba(0, 255, 135, 0.5);
+}
+
+.chart-wrapper {
+  margin: 1.5rem 0;
+  position: relative;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1rem;
+}
+
+.sandbox-svg-chart {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.projection-insights {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.insight-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  text-align: center;
+}
+
+.insight-title {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+}
+
+.insight-val {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+/* DAC Oasis Styles */
+.live-badge {
+  background: rgba(0, 255, 135, 0.15);
+  color: #00FF87;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: bold;
+  border: 1px solid rgba(0, 255, 135, 0.3);
+  animation: pulse-badge 2s infinite;
+}
+
+.visualizer-hud {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.2rem;
+  gap: 1.2rem;
+}
+
+.hud-pill {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 0.7rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hud-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.hud-val {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.accumulator-box {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(0, 255, 135, 0.12);
+  border-radius: 12px;
+  padding: 1.8rem;
+  text-align: center;
+  margin-bottom: 1.8rem;
+  box-shadow: inset 0 0 20px rgba(0, 255, 135, 0.05);
+}
+
+.accumulator-label {
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.accumulator-number-row {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-top: 0.5rem;
+}
+
+.acc-number {
+  font-size: 3.2rem;
+  font-weight: 800;
+  font-family: monospace;
+}
+
+.acc-unit {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.saturation-meter-group {
+  margin-bottom: 2rem;
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.75);
+  margin-bottom: 0.5rem;
+}
+
+.meter-track {
+  width: 100%;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease-out, background 0.3s;
+}
+
+.meter-warning {
+  font-size: 0.78rem;
+  margin-top: 0.5rem;
+  line-height: 1.35;
+}
+
+.text-error {
+  color: #ef4444;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
+}
+
+.button-group {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.controls-footer-help {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.4;
+  text-align: center;
+}
+
+@keyframes pulse-badge {
+  0% { opacity: 0.85; box-shadow: 0 0 0 0 rgba(0, 255, 135, 0.35); }
+  70% { opacity: 1; box-shadow: 0 0 0 6px rgba(0, 255, 135, 0); }
+  100% { opacity: 0.85; box-shadow: 0 0 0 0 rgba(0, 255, 135, 0); }
+}
+
+@media (max-width: 960px) {
+  .sandbox-grid, .sink-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

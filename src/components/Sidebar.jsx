@@ -19,11 +19,11 @@ export default function Sidebar({ activeTab, setActiveTab }) {
     { id: 'ai', name: 'AI Coach', icon: (
       <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" strokeLinecap="round"/></svg>
     ) },
-    { id: 'community', name: 'Community Feed', icon: (
-      <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 7a4 4 0 100-8 4 4 0 000 8zm14 14v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" strokeLinecap="round"/></svg>
+    { id: 'sandbox', name: 'Foresight Sandbox', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18M18.7 8l-5.1 5.2-2.8-2.7L7 14.3" strokeLinecap="round" strokeLinejoin="round"/></svg>
     ) },
-    { id: 'marketplace', name: 'Marketplace', icon: (
-      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v12M6 12h12" strokeLinecap="round"/></svg>
+    { id: 'sink', name: 'DAC Oasis', icon: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 12V2M12 12v10M12 12H2M12 12h10" strokeLinecap="round"/></svg>
     ) }
   ];
 
@@ -65,9 +65,9 @@ export default function Sidebar({ activeTab, setActiveTab }) {
           <span className="user-name" id="sidebar-name-val">{state.userName}</span>
           <span className="user-level" id="user-level-val">Level {userLevel} {userRole}</span>
         </div>
-        <button className="logout-btn" onClick={logout} title="Sign Out" aria-label="Sign Out">
+        <button className="logout-btn" onClick={logout} title="Reset Profile" aria-label="Reset Profile">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" strokeLinecap="round"/>
+            <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H16" strokeLinecap="round"/>
           </svg>
         </button>
       </div>

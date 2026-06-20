@@ -2,13 +2,12 @@ import React, { useState } from 'react';
 import { useAppState } from './AppStateContext';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
-import AuthOverlay from './components/AuthOverlay';
 import DashboardTab from './components/DashboardTab';
 import QuizTab from './components/QuizTab';
 import ActionsTab from './components/ActionsTab';
 import AICoachTab from './components/AICoachTab';
-import CommunityTab from './components/CommunityTab';
-import MarketplaceTab from './components/MarketplaceTab';
+import ForesightSandboxTab from './components/ForesightSandboxTab';
+import CarbonSinkTab from './components/CarbonSinkTab';
 import DeveloperTools from './components/DeveloperTools';
 
 export default function App() {
@@ -30,23 +29,19 @@ export default function App() {
         return <ActionsTab />;
       case 'ai':
         return <AICoachTab setActiveTab={setActiveTab} />;
-      case 'community':
-        return <CommunityTab />;
-      case 'marketplace':
-        return <MarketplaceTab />;
+      case 'sandbox':
+        return <ForesightSandboxTab />;
+      case 'sink':
+        return <CarbonSinkTab />;
       default:
         return <DashboardTab onRecalculate={handleRecalculate} />;
     }
   };
 
   return (
-    <div className={`app-root ${state.isLoggedIn ? 'logged-in' : ''}`}>
+    <div className="app-root logged-in">
       
-      {/* Auth Screen Overlay */}
-      <AuthOverlay />
-
-      {state.isLoggedIn && (
-        <div className="app-container">
+      <div className="app-container">
           {/* Sidebar Navigation */}
           <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
 
@@ -58,8 +53,7 @@ export default function App() {
               {renderActiveTab()}
             </div>
           </main>
-        </div>
-      )}
+      </div>
 
       {/* Developer Unit Test Suite modal */}
       {showTests && (

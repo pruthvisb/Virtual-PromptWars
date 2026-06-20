@@ -80,6 +80,35 @@ export default function CourierPlanet({ currentCarbon, completedActions, dailyBu
         this.planetGroup = new THREE.Group();
         this.scene.add(this.planetGroup);
 
+        // Glowing space portal ring behind the planet
+        this.portalGroup = new THREE.Group();
+        this.portalGroup.position.set(0, 0, -1.5); 
+        this.scene.add(this.portalGroup);
+
+        const ringGeom1 = new THREE.TorusGeometry(4.4, 0.08, 12, 64);
+        const ringGeom2 = new THREE.TorusGeometry(4.1, 0.04, 8, 48);
+        this.trackGeometry(ringGeom1);
+        this.trackGeometry(ringGeom2);
+
+        const healthy = stateRef.current.currentCarbon <= stateRef.current.dailyBudget;
+        this.materials.portal1 = this.trackMaterial(new THREE.MeshBasicMaterial({
+          color: healthy ? 0x00FF87 : 0xff3e3e,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.65
+        }));
+        this.materials.portal2 = this.trackMaterial(new THREE.MeshBasicMaterial({
+          color: healthy ? 0x06b6d4 : 0xef4444,
+          wireframe: true,
+          transparent: true,
+          opacity: 0.4
+        }));
+
+        this.portalMesh1 = new THREE.Mesh(ringGeom1, this.materials.portal1);
+        this.portalMesh2 = new THREE.Mesh(ringGeom2, this.materials.portal2);
+        this.portalGroup.add(this.portalMesh1);
+        this.portalGroup.add(this.portalMesh2);
+
         // Ocean Core Sphere
         const oceanGeom = new THREE.SphereGeometry(3.5, 32, 32);
         this.trackGeometry(oceanGeom);
@@ -572,6 +601,13 @@ export default function CourierPlanet({ currentCarbon, completedActions, dailyBu
         this.materials.ocean.color.setHex(healthy ? 0x0c4a6e : 0x3b3534);
         this.materials.land.color.setHex(healthy ? 0x059669 : 0x78716c);
         this.materials.leaves.color.setHex(healthy ? 0x10b981 : 0xb45309);
+        
+        if (this.materials.portal1) {
+          this.materials.portal1.color.setHex(healthy ? 0x00ff87 : 0xff3e3e);
+        }
+        if (this.materials.portal2) {
+          this.materials.portal2.color.setHex(healthy ? 0x06b6d4 : 0xef4444);
+        }
       }
 
       triggerQuest(actionId) {
@@ -685,6 +721,18 @@ export default function CourierPlanet({ currentCarbon, completedActions, dailyBu
         }
 
         const time = performance.now() * 0.003;
+        
+        // Animate the portal rings
+        if (this.portalMesh1 && this.portalMesh2) {
+          this.portalMesh1.rotation.z = time * 0.5;
+          this.portalMesh2.rotation.z = -time * 0.8;
+          
+          // Pulse scale
+          const pulse = 1.0 + Math.sin(time * 3) * 0.04;
+          this.portalMesh1.scale.set(pulse, pulse, pulse);
+          this.portalMesh2.scale.set(pulse * 0.98, pulse * 0.98, pulse * 0.98);
+        }
+
         Object.keys(this.quests).forEach(id => {
           const arrow = this.quests[id];
           if (arrow.visible) {
