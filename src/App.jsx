@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAppState } from './AppStateContext';
-import Sidebar from './components/Sidebar';
+import TopNavbar from './components/TopNavbar';
 import Header from './components/Header';
 import DashboardTab from './components/DashboardTab';
 import QuizTab from './components/QuizTab';
@@ -9,6 +9,7 @@ import AICoachTab from './components/AICoachTab';
 import ForesightSandboxTab from './components/ForesightSandboxTab';
 import CarbonSinkTab from './components/CarbonSinkTab';
 import DeveloperTools from './components/DeveloperTools';
+import ThreeDUniverse from './components/ThreeDUniverse';
 
 export default function App() {
   const { state, toasts, cookieConsent, saveCookieSettings } = useAppState();
@@ -40,13 +41,15 @@ export default function App() {
 
   return (
     <div className="app-root logged-in">
+      {/* Persistent 3D Command Deck viewport in background */}
+      <ThreeDUniverse activeTab={activeTab} />
       
-      <div className="app-container">
-          {/* Sidebar Navigation */}
-          <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="app-container-vertical">
+          {/* Top Navigation Bar */}
+          <TopNavbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
           {/* Main Content Area */}
-          <main className="main-content" role="main">
+          <main className="main-content-full" role="main">
             <Header activeTab={activeTab} onOpenTests={() => setShowTests(true)} />
             
             <div className="tab-page-container">
