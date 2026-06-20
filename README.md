@@ -1,15 +1,14 @@
-# EcoSphere AI - Carbon Intelligence Platform
+# EcoSphere AI - Carbon Intelligence Platform (Vite & React Edition)
 
 EcoSphere AI is a next-generation, AI-powered carbon intelligence coach designed to automatically measure, analyze, predict, and reduce an individual's carbon footprint. It features passive data simulation, advanced behavioral science nudges, community engagement, and a verified offsets ledger.
 
-This version introduces the **Carbon Courier 3D Planet**, a gamified WebGL simulator inspired by Vicente Lucendo's cozy planet delivery game *Messenger* (abeto.co).
+This version introduces a complete **Vite + React Single-Page Application (SPA)** structure containing a procedurally generated **3D Rotating miniature planet** (rendered with Three.js) and an **Interactive AI Carbon Coach** dialog client.
 
 ---
 
-## 1. Chosen Challenge Vertical
-**Carbon Footprint Tracking & Behavior Modification**
-
-EcoSphere AI targets long-term behavior modification by translating complex ecological data into a playful, interactive experience. Instead of static tables, the dashboard displays a **3D Rotating miniature planet** (procedurally rendered with Three.js). The user controls a **Carbon Courier** sprite standing on the planet. By logging green actions, users trigger quest markers above landmarks on the planet, guiding the courier to complete the delivery and visually clean up the ecosystem.
+## 1. Chosen Challenge Vertical & Persona
+- **Vertical**: Daily Commute & Lifestyle Optimization for Urban Professionals (The Smart Commuter)
+- **Persona**: *Alex, the Tech-Savvy Urbanite* (28 years old, hybrid worker, commutes by car occasionally, buys average retail, banking conventionally). Alex wants to measure and offset carbon emissions through simple daily actions without dealing with complex calculations or static tables.
 
 ---
 
@@ -66,35 +65,56 @@ Flat daily factor representing municipal waste processing:
 
 ---
 
-## 4. User Guide & Features
+## 4. Technology Stack & Directory Structure
+- **Vite & React (SPA):** Modular component structure, local state context provider.
+- **Three.js:** Procedural WebGL 3D rendering for the interactive 3D planet.
+- **CSS3:** Custom styles, custom range sliders, glassmorphic styling, keyframe animations, and transitions.
+- **Local Storage:** State serialization and cookie consent persistence.
 
-To run the platform locally, simply open `index.html` in any web browser.
-
-1. **Authentication:** Sign in using the mock credentials (`jane.doe@example.com` / `password123`) or click **Google Account** to trigger a simulated Google Sign-In.
-2. **Onboarding Quiz:** Access the quiz tab to calibrate your initial carbon baseline. Adjust options across transport, diet, energy, shopping, digital activities, and finance.
-3. **Carbon Courier 3D Planet:** View your rotating planet on the dashboard.
-   * **Controls:** Press `A` / `D` or `Left` / `Right` Arrow keys to walk the courier on the surface. Click and drag the ocean to spin the planet manually.
-   * **Deliveries:** When a green action is unlocked or simulated, a bouncing mail/arrow icon appears above its landmark. Walk the courier to it, and press `SPACE` or click it to complete the delivery and log the action!
-   * **Visual Climate States:**
-     * *Clean state (<= 8.0 kg/day):* Green continents, blue oceans, healthy trees, and rotating clean energy wind turbines.
-     * *Polluted state (> 8.0 kg/day):* Dusty brown land, dark grey oceans, withered trees, and stationary turbine blades.
-4. **GPS mobility tracker:** Toggle the switch to simulate automated travel tracking. The GPS simulator automatically detects transit rides and triggers a quest marker at the Train Station.
-5. **E-Commerce receipt scanner:** Type or select a mock receipt (e.g. Amazon jacket, Uber trip, grocery bill) and click "AI Parse" to parse the item, display emissions, confidence bar, and trigger a delivery quest above the market landmark.
-6. **AI Sustainability Coach:** Talk to the coach chatbot (type questions about "highest emitter", "digital", "finance", "weekly plan", or "transit") to receive context-aware, personalized footprint metrics.
-7. **Social Feed:** Share custom posts, comment on neighbors' achievements, or applaud posts.
-8. **Marketplace:** Check your points and spend them on sustainable discount vouchers or sponsor certified carbon offsets.
-
----
-
-## 5. Accessibility (WCAG 2.1 Compliance)
-* **Keyboard Navigation:** Custom option cards, sidebar navigation, and weekly planner cards are fully focusable using `Tab` and selectable using `Space` or `Enter`.
-* **ARIA Attributes:** Landmark elements, modal screens, progress sliders, and text boxes are labeled with proper ARIA attributes (`role="radio"`, `aria-checked`, `aria-label`).
-* **Visual Focus Rings:** Explicit visible outline borders appear on focused elements for low-vision and keyboard-only users.
+### Key Directory Layout
+- `index.html`: Main layout viewport and metadata.
+- `src/main.jsx`: Application bootstrap entry point.
+- `src/App.jsx`: Component manager and layout grid.
+- `src/AppStateContext.jsx`: Context provider hosting state variables, carbon calculations, and unit tests.
+- `src/index.css`: Style sheets (Abeto and abtc.com dark themed layout).
+- `src/components/`:
+  - `CourierPlanet.jsx`: WebGL Three.js canvas rendering the 3D interactive planet.
+  - `DashboardTab.jsx`: User twin display, carbon category breakdown, GPS auto-sync, and receipt parsing.
+  - `QuizTab.jsx`: Step-by-step onboarding questionnaire.
+  - `ActionsTab.jsx`: Habit logger checklist.
+  - `AICoachTab.jsx`: Dialog coach and weekly agenda planner.
+  - `CommunityTab.jsx`: Social feed and leagues.
+  - `MarketplaceTab.jsx`: Offset ledger sponsorship.
+  - `DeveloperTools.jsx`: Interactive unit test runner.
 
 ---
 
-## 6. Technology Stack
-* **HTML5:** Semantic architecture, accessible forms, overlays.
-* **Three.js:** Procedural WebGL 3D rendering, mesh geometry generation, and directional lighting animation.
-* **Vanilla CSS3:** Custom styles, custom range sliders, glassmorphic styling, keyframe animations, and transitions.
-* **Vanilla JavaScript (ES6):** State serialization, cookie persistence, popups, dynamic charts, context-aware chatbot router, and WebGL physics.
+## 5. Verification & Unit Testing
+An interactive test dashboard is built directly into the application. Click **"Run Tests"** in the header to launch the test suite, which runs assertions verifying:
+1. **Carbon Calculator Engines:** Correct transport, diet, and energy factors calculations.
+2. **Receipt AI Parsing Logic:** Accuracy in scanning apparel, transit, and aviation keywords.
+3. **AI Coach Bot Router:** Intent routing for greetings, carbon twin audits, and green banking queries.
+4. **State Sync & Live Calculations:** Live points calculations and footprint updates on habit logging.
+5. **WebGL Scene Initialization:** Verifies Three.js library loading and scene rendering constructors.
+
+---
+
+## 6. How to Run Locally
+
+### Prerequisites
+- Node.js (v18+) and npm installed.
+
+### Steps
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the local development server:
+   ```bash
+   npm run dev
+   ```
+3. Open the local address shown in your terminal (typically `http://localhost:5173`) in your web browser.
+4. Sign in with the preloaded mock credentials:
+   - **Email:** `jane.doe@example.com`
+   - **Password:** `password123`
+   - (Or click **Google Account** to trigger simulated OAuth).
