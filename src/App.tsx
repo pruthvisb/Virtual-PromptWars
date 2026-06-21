@@ -100,6 +100,7 @@ export default function App() {
               <button 
                 onClick={clearToast}
                 className="ml-auto text-slate-400 hover:text-white p-0.5 pointer-events-auto"
+                aria-label="Close notification"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -267,6 +268,7 @@ export default function App() {
             <button 
               onClick={clearToast}
               className="ml-auto text-slate-400 hover:text-white p-0.5"
+              aria-label="Close notification"
             >
               <X className="w-3.5 h-3.5" />
             </button>
