@@ -32,3 +32,6 @@ firebase-service-account.json
 .env.development
 .env.production
 
+# Firebase cache
+.firebase
+
