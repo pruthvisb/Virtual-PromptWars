@@ -175,7 +175,9 @@ export default function AICoachView() {
 
         {/* Text Input Area */}
         <form onSubmit={handleSend} className="flex gap-2">
+          <label htmlFor="ai-chat-input" className="sr-only">Ask Carbon Coach</label>
           <input
+            id="ai-chat-input"
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
@@ -187,6 +189,7 @@ export default function AICoachView() {
             type="submit"
             disabled={isLoading || !inputText.trim()}
             className="px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-heading font-black flex items-center justify-center transition-all cursor-pointer shadow-md"
+            aria-label="Send message"
           >
             <Send className="w-4 h-4" />
           </button>
