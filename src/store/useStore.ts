@@ -4,6 +4,23 @@ import { persist } from 'zustand/middleware';
 const API_BASE = 'http://localhost:5000/api';
 const PHP_API_BASE = 'http://localhost:8000';
 
+const syncProfileToFirestore = async (profile: any) => {
+  try {
+    if (profile && profile.email) {
+      const { doc, setDoc } = await import('firebase/firestore');
+      const { db } = await import('../firebase');
+      await setDoc(doc(db, 'profiles', profile.email), {
+        ...profile,
+        owned_frames: profile.owned_frames || ['none'],
+        owned_themes: profile.owned_themes || ['dark-green'],
+        owned_badges: profile.owned_badges || ['Seedling']
+      });
+    }
+  } catch (err) {
+    console.warn('Direct Firestore sync failed:', err);
+  }
+};
+
 export interface Challenge {
   id: string;
   category: 'daily' | 'weekly' | 'monthly';
@@ -374,6 +391,7 @@ export const useStore = create<StoreState>()(
           });
           get().showToast('Biography updated!', 'success');
         } catch (err) {
+          await syncProfileToFirestore(get().profile);
           get().showToast('Saved to Local Storage (database sync offline).', 'info');
         }
       },
@@ -460,6 +478,7 @@ export const useStore = create<StoreState>()(
             get().showToast('Sync with PostgreSQL database complete!', 'success');
           }
         } catch (err) {
+          await syncProfileToFirestore(get().profile);
           get().showToast('Quest logged to local workspace ledger.', 'success');
         }
       },
@@ -518,6 +537,7 @@ export const useStore = create<StoreState>()(
             get().showToast('Store transaction saved to cloud.', 'success');
           }
         } catch (err) {
+          await syncProfileToFirestore(get().profile);
           get().showToast('Unlocked cosmetic locally!', 'success');
         }
       },
@@ -544,6 +564,7 @@ export const useStore = create<StoreState>()(
             get().showToast(`Equipped ${type} customisation.`, 'success');
           }
         } catch (err) {
+          await syncProfileToFirestore(get().profile);
           get().showToast(`Equipped locally.`, 'success');
         }
       },
