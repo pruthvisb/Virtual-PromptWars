@@ -104,21 +104,37 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
         showToast('Account initialized! Welcome to EcoVerse.', 'success');
       }
     } catch (err: any) {
-      console.warn('Firebase error, attempting local developer login fallback:', err.code || err.message);
+      console.warn('Firebase auth error:', err.code || err.message);
       
-      // Fallback for offline development / placeholder sandbox credentials
-      if (email.includes('@') && password.length >= 6) {
-        // Set authenticated locally
-        setAuthenticated(true, email);
-        if (!isLogin && username.trim()) {
-          useStore.setState((state) => ({
-            profile: { ...state.profile, username: username.trim() }
-          }));
-        }
-        showToast(`Dev Session Initiated (Local Storage fallback).`, 'success');
-      } else {
-        const readableError = err.message || 'Authentication failed. Make sure password is at least 6 characters.';
+      const authErrors = [
+        'auth/invalid-credential',
+        'auth/wrong-password',
+        'auth/user-not-found',
+        'auth/invalid-email',
+        'auth/email-already-in-use',
+        'auth/weak-password'
+      ];
+      
+      const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      
+      if (!isLocalHost || authErrors.includes(err.code)) {
+        // Block login on production web or on explicit auth credential failures
+        const readableError = err.message || 'Authentication failed. Please check your credentials.';
         showToast(readableError, 'error');
+      } else {
+        // Fallback ONLY for local offline development
+        if (email.includes('@') && password.length >= 6) {
+          setAuthenticated(true, email);
+          if (!isLogin && username.trim()) {
+            useStore.setState((state) => ({
+              profile: { ...state.profile, username: username.trim() }
+            }));
+          }
+          showToast(`Dev Session Initiated (Local Storage fallback).`, 'success');
+        } else {
+          const readableError = err.message || 'Authentication failed. Make sure password is at least 6 characters.';
+          showToast(readableError, 'error');
+        }
       }
     } finally {
       setLoading(false);
