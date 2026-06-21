@@ -37,29 +37,7 @@ const db = getFirestore();
 // In-Memory Database Fallback
 let isDbConnected = false;
 const memDb = {
-  profiles: [
-    {
-      id: 1,
-      username: 'Warden_Jane',
-      bio: 'Protecting the planet, one habit at a time.',
-      level: 'Beginner',
-      xp: 120,
-      coins: 250,
-      streak: 3,
-      carbon_saved: 15.4,
-      equipped_frame: 'none',
-      equipped_theme: 'dark-green',
-      equipped_badge: 'Seedling',
-      owned_frames: ['none'],
-      owned_themes: ['dark-green'],
-      owned_badges: ['Seedling'],
-      email: 'jane@ecoverse.com'
-    },
-    { email: 'sarah@ecoverse.com', username: 'EcoWarrior_Sarah', bio: 'Co-Warden at EcoVerse.', level: 'Guardian', xp: 980, coins: 500, streak: 7, carbon_saved: 45.2, equipped_frame: 'none', equipped_theme: 'dark-green', equipped_badge: 'Seedling', owned_frames: ['none'], owned_themes: ['dark-green'], owned_badges: ['Seedling'] },
-    { email: 'ben@ecoverse.com', username: 'GreenTransitBen', bio: 'Co-Warden at EcoVerse.', level: 'Guardian', xp: 840, coins: 420, streak: 5, carbon_saved: 32.1, equipped_frame: 'none', equipped_theme: 'dark-green', equipped_badge: 'Seedling', owned_frames: ['none'], owned_themes: ['dark-green'], owned_badges: ['Seedling'] },
-    { email: 'alex@ecoverse.com', username: 'ZeroWasteAlex', bio: 'Co-Warden at EcoVerse.', level: 'Explorer', xp: 760, coins: 310, streak: 4, carbon_saved: 25.8, equipped_frame: 'none', equipped_theme: 'dark-green', equipped_badge: 'Seedling', owned_frames: ['none'], owned_themes: ['dark-green'], owned_badges: ['Seedling'] },
-    { email: 'dan@ecoverse.com', username: 'PlantPowerDan', bio: 'Co-Warden at EcoVerse.', level: 'Beginner', xp: 420, coins: 150, streak: 2, carbon_saved: 10.5, equipped_frame: 'none', equipped_theme: 'dark-green', equipped_badge: 'Seedling', owned_frames: ['none'], owned_themes: ['dark-green'], owned_badges: ['Seedling'] }
-  ],
+  profiles: [],
   challenges: [
     { id: 'daily_walk_bike', category: 'daily', title: 'Commute by Bike / Walk', description: 'Skip a fossil-fuel vehicle ride for active travel today.', xp_reward: 50, coin_reward: 25, progress: 0, target: 1, completed: false, badge_reward: '' },
     { id: 'daily_plant_meal', category: 'daily', title: 'Eat a Plant-Based Meal', description: 'Choose a vegan or vegetarian recipe for lunch or dinner.', xp_reward: 30, coin_reward: 15, progress: 0, target: 1, completed: false, badge_reward: '' },
@@ -69,26 +47,10 @@ const memDb = {
     { id: 'monthly_offsets', category: 'monthly', title: 'Sponsor Certified Forest Offsets', description: 'Offset historical emissions by contributing to verified trees growth.', xp_reward: 300, coin_reward: 150, progress: 0, target: 1, completed: false, badge_reward: 'Forest_Sponsor' },
     { id: 'seasonal_mangroves', category: 'seasonal', title: 'Plant 10 Mangrove Trees', description: 'Support certified coastal blue carbon reforestation programs.', xp_reward: 500, coin_reward: 250, progress: 0, target: 10, completed: false, badge_reward: 'Mangrove_Guardian' }
   ],
-  feed: [
-    { id: 1, author: 'EcoWarrior_Sarah', avatar: 'S', avatar_bg: '#10b981', time: 'Just now', content: 'Finished all my daily challenges! The morning active commute by bicycle was amazing 🚴‍♀️☀️', applauds: 12, comments: [], applauders: [] },
-    { id: 2, author: 'GreenTransitBen', avatar: 'B', avatar_bg: '#06b6d4', time: '2 hours ago', content: 'Swapped my conventional household bank to a clean green ESG bank! Starving fossil fuel funding feels awesome. (+80 coins!) 🏦🌱', applauds: 7, comments: [], applauders: [] },
-    { id: 3, author: 'ZeroWasteAlex', avatar: 'A', avatar_bg: '#8b5cf6', time: '5 hours ago', content: 'Composted my kitchen scrap bin today. Reducing landfill methane yields positive impact indices! 🪱♻️', applauds: 15, comments: [{ author: 'Sarah', text: 'Amazing work, Alex!' }], applauders: [] }
-  ],
-  friends: [
-    { id: 1, user_email: 'sarah@ecoverse.com', friend_email: 'jane@ecoverse.com', status: 'pending' },
-    { id: 2, user_email: 'jane@ecoverse.com', friend_email: 'alex@ecoverse.com', status: 'accepted' }
-  ],
-  direct_messages: [
-    { id: 1, sender_email: 'alex@ecoverse.com', receiver_email: 'jane@ecoverse.com', message: 'Hi Warden Jane! I noticed your tree density grew today. Awesome job! 🌲', media_url: '', media_type: '', created_at: new Date(Date.now() - 3600000).toISOString() },
-    { id: 2, sender_email: 'jane@ecoverse.com', receiver_email: 'alex@ecoverse.com', message: 'Thanks Alex! Commuted by bicycle today to help plant those tree nodes!', media_url: '', media_type: '', created_at: new Date(Date.now() - 1800000).toISOString() }
-  ],
-  analytics: [
-    { id: 1, year: 2026, emissions_avoided: 8.4, xp: 120, challenge_completion: 2 },
-    { id: 2, year: 2027, emissions_avoided: 24.6, xp: 480, challenge_completion: 7 },
-    { id: 3, year: 2028, emissions_avoided: 52.8, xp: 1120, challenge_completion: 18 },
-    { id: 4, year: 2029, emissions_avoided: 94.2, xp: 1980, challenge_completion: 31 },
-    { id: 5, year: 2030, emissions_avoided: 145.6, xp: 3200, challenge_completion: 52 }
-  ]
+  feed: [],
+  friends: [],
+  direct_messages: [],
+  analytics: []
 };
 
 // Seeding Helpers for Firestore (using Firebase Admin SDK APIs)
@@ -226,12 +188,8 @@ async function initDb() {
     isDbConnected = true;
     console.log('Firebase Firestore database connected securely via Admin SDK. Checking collections...');
 
-    await seedProfiles();
+    // Only seed default ecological challenges
     await seedChallenges();
-    await seedFeed();
-    await seedFriends();
-    await seedDirectMessages();
-    await seedAnalytics();
 
   } catch (err) {
     isDbConnected = false;
