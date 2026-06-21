@@ -171,7 +171,9 @@ export default function ProfileView() {
             <div className="w-full border-t border-white/5 pt-4 mt-2">
               {isEditing ? (
                 <form onSubmit={handleSaveBio} className="flex flex-col gap-2">
+                  <label htmlFor="profile-bio-input" className="sr-only">Edit Profile Bio</label>
                   <textarea
+                    id="profile-bio-input"
                     value={bioText}
                     onChange={(e) => setBioText(e.target.value)}
                     className="w-full bg-slate-950 border border-white/10 rounded-xl p-3 text-xs text-slate-300 focus:outline-none focus:border-emerald-500 resize-none h-20"
