@@ -410,7 +410,9 @@ export default function ProfileView() {
                   
                   {/* Search Bar */}
                   <form onSubmit={handleSearch} className="flex gap-2">
+                    <label htmlFor="user-search-input" className="sr-only">Search warden email</label>
                     <input
+                      id="user-search-input"
                       type="text"
                       placeholder="Search warden email..."
                       value={searchQuery}
@@ -421,6 +423,7 @@ export default function ProfileView() {
                       type="submit"
                       disabled={isSearching}
                       className="p-2 bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 rounded-xl flex items-center justify-center transition-all cursor-pointer shadow-md"
+                      aria-label="Search users"
                     >
                       <Search className="w-3.5 h-3.5" />
                     </button>
@@ -590,7 +593,7 @@ export default function ProfileView() {
                             {selectedFile.type.includes('video') ? <Video className="w-3.5 h-3.5 text-cyan-400" /> : <Image className="w-3.5 h-3.5 text-emerald-400" />}
                             <span className="truncate max-w-[150px]">{selectedFile.name}</span>
                           </div>
-                          <button onClick={clearFileSelection} className="text-slate-500 hover:text-white">
+                          <button onClick={clearFileSelection} className="text-slate-500 hover:text-white" aria-label="Remove attachment">
                             <X className="w-3.5 h-3.5" />
                           </button>
                         </div>
@@ -599,22 +602,27 @@ export default function ProfileView() {
                       {/* Chat Input Form */}
                       <form onSubmit={handleSendMessage} className="flex gap-2 border-t border-white/5 pt-3">
                         <input
+                          id="chat-file-input"
                           type="file"
                           ref={fileInputRef}
                           onChange={handleFileChange}
                           accept="image/*,video/*"
                           className="hidden"
+                          aria-label="Upload media attachment"
                         />
                         <button
                           type="button"
                           onClick={() => fileInputRef.current?.click()}
                           className="p-3 bg-white/5 hover:bg-white/10 border border-white/10 text-slate-400 hover:text-white rounded-xl flex items-center justify-center transition-all cursor-pointer shrink-0"
                           title="Attach Image/Video"
+                          aria-label="Attach media file"
                         >
                           <Paperclip className="w-3.5 h-3.5" />
                         </button>
                         
+                        <label htmlFor="chat-text-input" className="sr-only">Type secure transmission</label>
                         <input
+                          id="chat-text-input"
                           type="text"
                           placeholder="Type secure transmission..."
                           value={chatMessageText}
@@ -626,6 +634,7 @@ export default function ProfileView() {
                           type="submit"
                           disabled={!chatMessageText.trim() && !selectedFile}
                           className="px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-cyan-500 text-slate-950 font-black flex items-center justify-center transition-all cursor-pointer shadow-md shrink-0 disabled:opacity-40"
+                          aria-label="Send message"
                         >
                           <Send className="w-3.5 h-3.5" />
                         </button>
