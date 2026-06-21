@@ -2,15 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useStore } from './store/useStore';
 import { auth, onAuthStateChanged, signOut } from './firebase';
 
-import LandingPage from './components/LandingPage';
-import LoginView from './components/LoginView';
-import DashboardView from './components/DashboardView';
-import ChallengesView from './components/ChallengesView';
-import MarketplaceView from './components/MarketplaceView';
-import CommunityView from './components/CommunityView';
-import AICoachView from './components/AICoachView';
-import AnalyticsView from './components/AnalyticsView';
-import ProfileView from './components/ProfileView';
+const LandingPage = React.lazy(() => import('./components/LandingPage'));
+const LoginView = React.lazy(() => import('./components/LoginView'));
+const DashboardView = React.lazy(() => import('./components/DashboardView'));
+const ChallengesView = React.lazy(() => import('./components/ChallengesView'));
+const MarketplaceView = React.lazy(() => import('./components/MarketplaceView'));
+const CommunityView = React.lazy(() => import('./components/CommunityView'));
+const AICoachView = React.lazy(() => import('./components/AICoachView'));
+const AnalyticsView = React.lazy(() => import('./components/AnalyticsView'));
+const ProfileView = React.lazy(() => import('./components/ProfileView'));
 
 import { 
   Leaf, Coins, Flame, Trophy, Cpu, Users, BarChart3, 
@@ -76,7 +76,7 @@ export default function App() {
 
   if (!isAuthenticated) {
     return (
-      <>
+      <React.Suspense fallback={<div className="min-h-screen bg-slate-950 flex items-center justify-center text-emerald-400 font-black text-sm">Calibrating...</div>}>
         {showAuth ? (
           <LoginView onBack={() => setShowAuth(false)} />
         ) : (
@@ -107,7 +107,7 @@ export default function App() {
             </div>
           )}
         </div>
-      </>
+      </React.Suspense>
     );
   }
 
@@ -228,7 +228,9 @@ export default function App() {
             exit={{ opacity: 0, y: -15 }}
             transition={{ duration: 0.2 }}
           >
-            {renderActiveView()}
+            <React.Suspense fallback={<div className="glass-panel border border-white/5 p-8 rounded-3xl text-center text-slate-400 font-bold text-xs animate-pulse">Synchronizing Twin Data...</div>}>
+              {renderActiveView()}
+            </React.Suspense>
           </motion.div>
         </AnimatePresence>
       </main>

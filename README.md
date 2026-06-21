@@ -1,120 +1,105 @@
-# EcoSphere AI - Carbon Intelligence Platform (Vite & React Edition)
+# EcoVerse - Dynamic Carbon Twin & AI Coach Platform
 
-EcoSphere AI is a next-generation, AI-powered carbon intelligence coach designed to automatically measure, analyze, predict, and reduce an individual's carbon footprint. It features passive data simulation, advanced behavioral science nudges, community engagement, and a verified offsets ledger.
-
-This version introduces a complete **Vite + React Single-Page Application (SPA)** structure containing a procedurally generated **3D Rotating miniature planet** (rendered with Three.js) and an **Interactive AI Carbon Coach** dialog client.
+EcoVerse is an advanced gamified sustainability platform designed to automatically measure, analyze, calibrate, and reduce an individual's carbon footprint. It features an interactive **3D WebGL miniature planet** (rendered dynamically using Three.js) and a context-aware **AI Climate Coach** chatbot.
 
 ---
 
-## 1. Chosen Challenge Vertical & Persona
-- **Vertical**: Daily Commute & Lifestyle Optimization for Urban Professionals (The Smart Commuter)
-- **Persona**: *Alex, the Tech-Savvy Urbanite* (28 years old, hybrid worker, commutes by car occasionally, buys average retail, banking conventionally). Alex wants to measure and offset carbon emissions through simple daily actions without dealing with complex calculations or static tables.
+## 📸 Application Screenshot Placeholders
+
+![EcoVerse Dashboard Mockup](https://raw.githubusercontent.com/pruthvisb/Virtual-PromptWars/main/public/uploads/dashboard_placeholder.png)
+*Placeholder: Premium Glassmorphism Dashboard displaying Carbon Twin Calibration, XP progressions, and the procedurally generated 3D earth.*
 
 ---
 
-## 2. Carbon Coefficient Formulas (Scope 1, 2, and 3)
-The platform performs calculations based on the following daily emission coefficients ($kg\ CO_2e$):
+## 🎯 Chosen Challenge Vertical & Persona
 
-### A. Transportation (Scope 1)
-Calculated as: `daily_emissions = transport_mode_coefficient * daily_km`
-* **Gas Car:** `0.18 kg CO₂e / km`
-* **Electric Vehicle (EV):** `0.04 kg CO₂e / km` (accounts for regional grid charging emissions)
-* **Public Transit:** `0.05 kg CO₂e / km`
-* **Bicycle / Walking:** `0.00 kg CO₂e / km`
-
-### B. Nutritional Diet (Scope 3 - Agriculture & Logistics)
-Calculated as a flat daily factor based on diet style:
-* **Heavy Meat Eater:** `7.2 kg CO₂e / day`
-* **Balanced / Average Diet:** `4.8 kg CO₂e / day`
-* **Low Meat / Vegetarian:** `3.1 kg CO₂e / day`
-* **Strict Vegan:** `1.6 kg CO₂e / day`
-
-### C. Home Energy (Scope 2 & Scope 1 Heating)
-Calculated as: `daily_emissions = home_size_coefficient * energy_source_multiplier`
-* **Home Sizes (Baseline):** Apartment (`2.2`), Townhouse (`4.5`), Stand-alone House (`7.0`)
-* **Source Multipliers:** Fossil Fuels (Coal/Gas: `1.5`), Standard Grid Mix (`1.0`), 100% Renewables / Solar (`0.1`)
-
-### D. Consumer Shopping (Scope 3 - Manufacturing & Supply Chain)
-Flat daily factor representing household goods consumption:
-* **High Purchases:** `6.2 kg CO₂e / day`
-* **Average Purchases:** `3.5 kg CO₂e / day`
-* **Minimal / Second-hand:** `1.2 kg CO₂e / day`
-
-### E. Waste & Recycling (Scope 3 - End-of-life)
-Flat daily factor representing municipal waste processing:
-* **No Recycling / Composting:** `1.8 kg CO₂e / day`
-* **Partial Recycling:** `0.9 kg CO₂e / day`
-* **Full Composting & Recycling:** `0.1 kg CO₂e / day`
-
-### F. Digital Footprint (Scope 3 - Financed Data Center Energy)
-* **Low (<1 hr/day):** `0.1 kg CO₂e / day`
-* **Average (1-4 hrs/day):** `0.5 kg CO₂e / day`
-* **High (4+ hrs/day HD/4K):** `1.5 kg CO₂e / day`
-
-### G. Financial Financed Emissions (Scope 3 - Indirect Capital Investment)
-* **Green Banks / ESG portfolios:** `0.2 kg CO₂e / day`
-* **Balanced Mix:** `1.8 kg CO₂e / day`
-* **Conventional Commercial Banks:** `4.5 kg CO₂e / day` (high fossil fuel financing)
+- **Challenge Vertical**: Daily Commute & Lifestyle Optimization for Urban Professionals (The Smart Commuter)
+- **Target Persona**: **Alex, the Tech-Savvy Urbanite** (28 years old, hybrid worker, commutes by gas car occasionally, buys average retail, and banks conventionally). Alex wants to audit and offset carbon emissions through simple daily actions without dealing with complex calculations or static spreadsheets.
 
 ---
 
-## 3. Assumptions and Standards Alignment
-* **Sustainable Target Budget:** The platform sets a target daily budget of **8.0 kg CO₂e**. This aligns with the United Nations IPCC pathways targeting a limit of 1.5°C global warming by 2030 (scaled down to individual daily shares).
-* **Scope 3 Financed Emissions:** Emphasizes that traditional banking deposits fund fossil fuels. Moving capital to an ESG bank cuts indirect emissions by ~4.5 kg CO₂e/day.
-* **Additionality in Offsets:** Offset credits assume verified standards (Verra and Gold Standard) with confidence scores reflecting durability and additionality.
+## ⚠️ Problem Statement
+
+Urban professionals generate high direct (commuting, heating) and indirect (nutritional diet, banking financed capital) emissions. They are often unaware of their highest contributors (Scope 1, 2, and 3 split) or how to target them. Traditional carbon tools rely on static tables, offering no real-time gamified incentive or contextual guidance.
 
 ---
 
-## 4. Technology Stack & Directory Structure
-- **Vite & React (SPA):** Modular component structure, local state context provider.
-- **Three.js:** Procedural WebGL 3D rendering for the interactive 3D planet.
-- **CSS3:** Custom styles, custom range sliders, glassmorphic styling, keyframe animations, and transitions.
-- **Local Storage:** State serialization and cookie consent persistence.
+## 🧠 AI Logic & Decision Flow
 
-### Key Directory Layout
-- `index.html`: Main layout viewport and metadata.
-- `src/main.jsx`: Application bootstrap entry point.
-- `src/App.jsx`: Component manager and layout grid.
-- `src/AppStateContext.jsx`: Context provider hosting state variables, carbon calculations, and unit tests.
-- `src/index.css`: Style sheets (Abeto and abtc.com dark themed layout).
-- `src/components/`:
-  - `CourierPlanet.jsx`: WebGL Three.js canvas rendering the 3D interactive planet.
-  - `DashboardTab.jsx`: User twin display, carbon category breakdown, GPS auto-sync, and receipt parsing.
-  - `QuizTab.jsx`: Step-by-step onboarding questionnaire.
-  - `ActionsTab.jsx`: Habit logger checklist.
-  - `AICoachTab.jsx`: Dialog coach and weekly agenda planner.
-  - `CommunityTab.jsx`: Social feed and leagues.
-  - `MarketplaceTab.jsx`: Offset ledger sponsorship.
-  - `DeveloperTools.jsx`: Interactive unit test runner.
+The AI Coach chatbot is context-aware and computes personalized responses on the fly:
 
----
-
-## 5. Verification & Unit Testing
-An interactive test dashboard is built directly into the application. Click **"Run Tests"** in the header to launch the test suite, which runs assertions verifying:
-1. **Carbon Calculator Engines:** Correct transport, diet, and energy factors calculations.
-2. **Receipt AI Parsing Logic:** Accuracy in scanning apparel, transit, and aviation keywords.
-3. **AI Coach Bot Router:** Intent routing for greetings, carbon twin audits, and green banking queries.
-4. **State Sync & Live Calculations:** Live points calculations and footprint updates on habit logging.
-5. **WebGL Scene Initialization:** Verifies Three.js library loading and scene rendering constructors.
+```mermaid
+graph TD
+    UserQuery[User Chat Query] --> FetchTwin[Retrieve User's Calibrated Twin Profile]
+    FetchTwin --> CalcFootprint[Calculate Live Total Footprint & Scope Split]
+    CalcFootprint --> FindHighest[Identify Highest Contributor Category]
+    FindHighest --> MatchIntent{Match User Intent?}
+    
+    MatchIntent -- Twin Audit / Score --> AuditReply[Reply with Total Footprint, Scope 1/2/3 breakdown, and target emission savings comparison]
+    MatchIntent -- Worst Emitter --> EmitterReply[Explain why Category X is highest emitter and recommend specific habit swap]
+    MatchIntent -- Swapping Banks --> BankingReply[Explain logical impact of funded oil/gas capital and ESG savings]
+    MatchIntent -- Habits / Commutes --> HabitsReply[Evaluate commute distance and recommend walk/bike or EV swap stats]
+    MatchIntent -- Fallback --> GeneralReply[Provide general micro-action suggestions based on highest emitter]
+    
+    AuditReply --> Response[Return JSON reply to UI]
+    EmitterReply --> Response
+    BankingReply --> Response
+    HabitsReply --> Response
+    GeneralReply --> Response
+```
 
 ---
 
-## 6. How to Run Locally
+## ✨ Features
+
+1. **Carbon Twin Calibration**: Sliders and dropdowns to dynamically model commuting transit, dietary habits, home power mixes, shopping habits, and bank selections.
+2. **Interactive 3D WebGL Biosphere**: Procedures growing tree clusters and dynamic soil states based on active XP rewards.
+3. **AI Carbon Coach Dialog**: Context-aware chat bot interface evaluating twin configurations, computing emissions, comparing against the sustainable budget (8.0 kg/day limit), and returning reduction strategies.
+4. **Community Feed & Direct Messages**: Warden networking feed, comment/applause system, and direct transmissions with image/video attachments.
+5. **Cosmetic Marketplace Store**: Purchase avatar frames, glowing background themes, and elite warden badges using virtual Eco Coins.
+6. **Robust Testing & Clean Linting**: Verified Vitest suite and ESLint configurations.
+
+---
+
+## ⚙️ Technology Stack & Architecture
+
+- **Frontend**: React SPA (TypeScript), Vite, Zustand, Recharts, Framer Motion, Three.js (WebGL).
+- **Backend Services**: Node.js (Express), PHP APIs.
+- **Databases**: Firebase Firestore (Cloud), PostgreSQL (Local).
+- **Asset Split**: Views dynamically chunked and lazy-loaded via React Suspense fallback modules.
+
+---
+
+## 🚀 Installation & Local Setup
 
 ### Prerequisites
 - Node.js (v18+) and npm installed.
 
-### Steps
-1. Install dependencies:
+### Setup Guide
+1. Clone the repository and install dependencies:
    ```bash
    npm install
    ```
-2. Start the local development server:
+2. Configure Environment:
+   - Copy [`.env.example`](file:///c:/Users/AstroCluster/Desktop/physics/.env.example) to `.env` and fill in your details.
+3. Launch development workspace:
    ```bash
    npm run dev
    ```
-3. Open the local address shown in your terminal (typically `http://localhost:5173`) in your web browser.
-4. Sign in with the preloaded mock credentials:
-   - **Email:** `jane.doe@example.com`
-   - **Password:** `password123`
-   - (Or click **Google Account** to trigger simulated OAuth).
+   *This starts both the Node Express server (port 5000) and the Vite development server in parallel.*
+4. Open the local address (typically `http://localhost:5173`) in your web browser.
+
+---
+
+## 📋 Assumptions
+
+- **UN IPCC Sustainable Budget**: Daily target of **8.0 kg CO₂e** is assumed based on pathways to limit warming to 1.5°C by 2030 (scaled down to daily individual targets).
+- **Emissions coefficients**: Values represent standard daily averages ($kg\ CO_2e$) for transportation modes, dietary choices, home sizes, retail manufacturing, and financed commercial banking capitals.
+
+---
+
+## 🔮 Future Improvements
+
+1. **Automatic GPS Commute Log**: Auto-calculate transportation distance commute segments using cell telemetry.
+2. **Receipt Parsing AI**: Scan shopping invoices to extract detailed consumer retail Scope 3 indicators.
+3. **OAuth Integrations**: Support native Google OAuth logins for wardens.

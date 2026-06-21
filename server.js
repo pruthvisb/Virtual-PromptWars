@@ -653,26 +653,86 @@ app.get('/api/analytics', async (req, res) => {
 
 // AI Coach Tip Route
 app.post('/api/ai/chat', async (req, res) => {
-  const { message } = req.body;
+  const { 
+    message, 
+    carbon_saved, 
+    commute_mode, 
+    commute_km, 
+    diet_style, 
+    home_size, 
+    energy_source, 
+    shopping_level, 
+    recycling_level, 
+    digital_hours, 
+    banking_type 
+  } = req.body;
   const msg = message.toLowerCase();
-  
+
+  // 1. Setup contextual parameters (fallback to default Alex values if missing)
+  const cMode = commute_mode || 'gas_car';
+  const cKm = typeof commute_km === 'number' ? commute_km : 15;
+  const dStyle = diet_style || 'balanced';
+  const hSize = home_size || 'townhouse';
+  const eSource = energy_source || 'grid';
+  const sLevel = shopping_level || 'average';
+  const rLevel = recycling_level || 'partial';
+  const dHours = digital_hours || 'average';
+  const bType = banking_type || 'conventional';
+
+  // 2. Compute individual components
+  const transCoeff = { gas_car: 0.18, ev: 0.04, public_transit: 0.05, walk_bike: 0.00 }[cMode] || 0.0;
+  const transVal = parseFloat((transCoeff * cKm).toFixed(2));
+
+  const dietVal = { heavy_meat: 7.2, balanced: 4.8, low_meat: 3.1, strict_vegan: 1.6 }[dStyle] || 4.8;
+
+  const homeCoeff = { apartment: 2.2, townhouse: 4.5, house: 7.0 }[hSize] || 4.5;
+  const energyMult = { fossil: 1.5, grid: 1.0, renewable: 0.1 }[eSource] || 1.0;
+  const homeVal = parseFloat((homeCoeff * energyMult).toFixed(2));
+
+  const shoppingVal = { high: 6.2, average: 3.5, minimal: 1.2 }[sLevel] || 3.5;
+  const wasteVal = { none: 1.8, partial: 0.9, full: 0.1 }[rLevel] || 0.9;
+  const digitalVal = { low: 0.1, average: 0.5, high: 1.5 }[dHours] || 0.5;
+  const bankingVal = { conventional: 4.5, balanced: 1.8, green: 0.2 }[bType] || 4.5;
+
+  const total = parseFloat((transVal + dietVal + homeVal + shoppingVal + wasteVal + digitalVal + bankingVal).toFixed(2));
+  const saved = carbon_saved || 0.0;
+
+  // 3. Determine highest emitter category
+  const categories = [
+    { name: 'Transportation Commute', val: transVal, recommendation: 'Swap one vehicle ride for active cycling/walking or transition to an EV.' },
+    { name: 'Nutritional Diet', val: dietVal, recommendation: 'Try moving towards plant-based meals and strict vegan options.' },
+    { name: 'Home Grid Energy', val: homeVal, recommendation: 'Consider switching your grid electricity to a 100% renewable/solar provider.' },
+    { name: 'Retail Consumer Shopping', val: shoppingVal, recommendation: 'Buy second-hand or recycle goods, reducing manufacturing demand.' },
+    { name: 'Waste Processing', val: wasteVal, recommendation: 'Implement composting and partial or full municipal recycling.' },
+    { name: 'Digital Data Centers', val: digitalVal, recommendation: 'Reduce daily HD stream hours or clear duplicate cloud storage files.' },
+    { name: 'Capital Financed Banking', val: bankingVal, recommendation: 'Transition your deposits and cash assets to a clean green ESG bank.' }
+  ];
+  categories.sort((a, b) => b.val - a.val);
+  const highest = categories[0];
+
+  // 4. Construct AI context response
   let reply;
-  if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey')) {
-    reply = "Hello Warden! I am your EcoVerse AI Coach. Ask me about your habits, emissions tips, or how to maximize Eco Coins!";
+  if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey') || msg.includes('greet')) {
+    reply = `Hello Warden! I am your context-aware EcoVerse AI Coach. Right now, your calibrated twin is emitting ${total} kg CO₂e/day. Ask me about your footprint score, highest emitter, or how to swap conventional banking.`;
   } else if (msg.includes('coin') || msg.includes('eco coin') || msg.includes('shop') || msg.includes('marketplace')) {
     reply = "You can earn Eco Coins by completing Daily/Weekly challenges. Spend your coins in the Market to buy animated avatar frames, glowing background themes, and customized profile badges!";
   } else if (msg.includes('xp') || msg.includes('level') || msg.includes('guardian')) {
     reply = "XP represents your progression. Every 300 XP levels you up. Levels include Explorer, Guardian, Protector, and Legend. Completed challenges and community posts earn you bonus XP!";
   } else if (msg.includes('score') || msg.includes('footprint') || msg.includes('how am i doing') || msg.includes('audit') || msg.includes('twin')) {
-    reply = "Your current footprint baseline is 18.2 kg CO₂e/day, but with your active quests completed today, you have successfully saved emissions! Keep it up.";
-  } else if (msg.includes('highest') || msg.includes('emitter') || msg.includes('worst')) {
-    reply = "Your single largest carbon category is Conventional Transport Commuting. Consider walking, cycling, or public transit to wipe this out!";
+    reply = `Your current daily carbon footprint score is ${total} kg CO₂e/day (Sustainable target is 8.0 kg). You have optimized habits saving ${saved} kg compared to baseline. 
+Scope 1 Direct (Transit): ${transVal} kg, Scope 2 Energy (Home): ${homeVal} kg, Scope 3 Indirect (Others): ${(total - transVal - homeVal).toFixed(2)} kg. 
+Your largest emissions contributor is ${highest.name} at ${highest.val} kg CO₂e/day. ${highest.recommendation}`;
+  } else if (msg.includes('highest') || msg.includes('emitter') || msg.includes('worst') || msg.includes('contributor')) {
+    reply = `Based on your twin audit configuration, your single largest carbon emitter is ${highest.name} contributing ${highest.val} kg CO₂e/day. 
+Logical reasoning: Because this category contributes ${(highest.val / total * 100).toFixed(0)}% of your total footprint, focusing here yields the highest emission reduction rate. Recommendation: ${highest.recommendation}`;
   } else if (msg.includes('bank') || msg.includes('finance') || msg.includes('money') || msg.includes('esg')) {
-    reply = "Conventional commercial banks represent the highest silent capital funders of oil/gas grids. Swapping your bank deposits to a clean green ESG bank will wipe out financed emissions!";
+    reply = `Capital Financed Banking contributes ${bankingVal} kg CO₂e/day of your footprint. 
+Logical reasoning: Standard commercial banks invest client deposits directly into oil/gas pipeline grids. Moving to a green ESG bank (which scores 0.2 kg CO₂e/day) will immediately save ${(bankingVal - 0.2).toFixed(1)} kg CO₂e/day.`;
   } else if (msg.includes('habit') || msg.includes('reduce') || msg.includes('transport') || msg.includes('car')) {
-    reply = "To reduce transport emissions, swap one daily fuel commute for public transit or active walking/cycling. This eliminates roughly 3.6 kg of carbon equivalents per trip!";
+    reply = `Commuting Transit accounts for ${transVal} kg CO₂e/day. 
+Logical reasoning: Driving a Gas Car produces 0.18 kg CO₂e/km. By swapping your daily ${cKm} km drive to walking, cycling (0.00 kg) or public transit (0.05 kg), you eliminate up to ${transVal.toFixed(1)} kg of direct Scope 1 emissions!`;
   } else {
-    reply = "Great question! Sustainability is built on micro-actions like cold water laundry washing, digital email clearing, and plant-based nutrition swaps. Try checking off a challenge in your dashboard today!";
+    reply = `Great query. Based on your current lifestyle footprint of ${total} kg CO₂e/day, I recommend focusing on ${highest.name} (currently ${highest.val} kg/day) to drop closer to the 8.0 kg sustainable target limit.`;
   }
 
   res.json({ reply });
