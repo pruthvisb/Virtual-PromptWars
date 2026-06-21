@@ -75,10 +75,39 @@ export default function App() {
   };
 
   if (!isAuthenticated) {
-    if (showAuth) {
-      return <LoginView onBack={() => setShowAuth(false)} />;
-    }
-    return <LandingPage onEnter={() => setShowAuth(true)} />;
+    return (
+      <>
+        {showAuth ? (
+          <LoginView onBack={() => setShowAuth(false)} />
+        ) : (
+          <LandingPage onEnter={() => setShowAuth(true)} />
+        )}
+        
+        {/* Toast Notification Container for Unauthenticated Screens */}
+        <div className="fixed top-6 right-6 z-50 flex flex-col gap-2 max-w-sm pointer-events-none">
+          {toastObj && (
+            <div 
+              className={`p-4 rounded-2xl text-xs font-bold shadow-2xl text-left flex items-center gap-2 border pointer-events-auto ${
+                toastObj.type === 'success' 
+                  ? 'bg-emerald-950/80 border-emerald-500/20 text-emerald-400' 
+                  : toastObj.type === 'error' 
+                  ? 'bg-red-950/80 border-red-500/20 text-red-400' 
+                  : 'bg-slate-950/80 border-white/5 text-slate-300'
+              }`}
+            >
+              <span>{toastObj.type === 'success' ? '✓' : toastObj.type === 'error' ? '⚠️' : 'ℹ'}</span>
+              <span>{toastObj.message}</span>
+              <button 
+                onClick={clearToast}
+                className="ml-auto text-slate-400 hover:text-white p-0.5 pointer-events-auto"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
+        </div>
+      </>
+    );
   }
 
   const renderActiveView = () => {
