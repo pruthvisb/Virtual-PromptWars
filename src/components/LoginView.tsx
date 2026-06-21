@@ -248,10 +248,11 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
                   transition={{ duration: 0.2 }}
                   className="flex flex-col gap-1"
                 >
-                  <label className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Citizen Username</label>
+                  <label htmlFor="username" className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Citizen Username</label>
                   <div className="relative">
                     <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-500">@</span>
                     <input
+                      id="username"
                       type="text"
                       required
                       value={username}
@@ -265,10 +266,11 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
             </AnimatePresence>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Email Address</label>
+              <label htmlFor="email" className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Email Address</label>
               <div className="relative">
                 <Mail className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
+                  id="email"
                   type="email"
                   required
                   value={email}
@@ -280,10 +282,11 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Secret Password</label>
+              <label htmlFor="password" className="text-[10px] uppercase tracking-wider font-bold text-slate-500">Secret Password</label>
               <div className="relative">
                 <Lock className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500" />
                 <input
+                  id="password"
                   type="password"
                   required
                   value={password}
