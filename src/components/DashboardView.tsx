@@ -1,14 +1,12 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useStore, getLevelNumber, getLevelName, calculateFootprint } from '../store/useStore';
 import ThreeDPlanet from './ThreeDPlanet';
 import PlantAvatar from './PlantAvatar';
-import { Flame, Trophy, Coins, Leaf, Zap, Compass, RefreshCw, CheckCircle2, ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Flame, Trophy, Coins, Leaf, Compass, RefreshCw } from 'lucide-react';
 
 export default function DashboardView() {
   const profile = useStore((state) => state.profile);
   const challenges = useStore((state) => state.challenges);
-  const socialPosts = useStore((state) => state.socialPosts);
   const completeChallenge = useStore((state) => state.completeChallenge);
   const isLoading = useStore((state) => state.isLoading);
   const fetchData = useStore((state) => state.fetchData);
@@ -32,7 +30,6 @@ export default function DashboardView() {
   const achievements = useStore((state) => state.achievements) || [];
   const completedAchievementsCount = achievements.filter(a => a.completed).length;
   const activeDailyChallenges = (challenges || []).filter(c => c.category === 'daily').slice(0, 3);
-  const recentActivities = (socialPosts || []).slice(0, 2);
 
   const getFrameClass = (frame: string) => {
     switch (frame) {

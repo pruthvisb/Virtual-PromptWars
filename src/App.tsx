@@ -13,8 +13,8 @@ const AnalyticsView = React.lazy(() => import('./components/AnalyticsView'));
 const ProfileView = React.lazy(() => import('./components/ProfileView'));
 
 import { 
-  Leaf, Coins, Flame, Trophy, Cpu, Users, BarChart3, 
-  Compass, RefreshCw, X, Sparkles, User 
+  Leaf, Coins, Trophy, Cpu, Users, BarChart3, 
+  Compass, RefreshCw, X, User 
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 

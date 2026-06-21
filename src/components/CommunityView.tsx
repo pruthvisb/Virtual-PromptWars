@@ -218,6 +218,7 @@ export default function CommunityView() {
                     return (
                       <button 
                         onClick={() => applaudPost(post.id)}
+                        aria-label={hasApplauded ? "Remove applaud reaction" : "Applaud this post"}
                         className={`flex items-center gap-1.5 text-xs transition-colors cursor-pointer ${
                           hasApplauded ? 'text-emerald-400 font-extrabold' : 'text-slate-400 hover:text-emerald-400'
                         }`}
@@ -230,6 +231,7 @@ export default function CommunityView() {
 
                   <button 
                     onClick={() => setActiveCommentsPostId(activeCommentsPostId === post.id ? null : post.id)}
+                    aria-label={`Toggle comments for post by ${post.author}`}
                     className="flex items-center gap-1.5 text-xs text-slate-400 hover:text-cyan-400 transition-colors cursor-pointer"
                   >
                     <MessageSquare className="w-4 h-4" />
@@ -242,7 +244,6 @@ export default function CommunityView() {
                   <div className="flex flex-col gap-3 pt-2">
                     <div className="flex flex-col gap-2.5 max-h-48 overflow-y-auto pl-2 border-l border-white/10 pr-1">
                       {(post.comments || []).map((comment, index) => {
-                        const commentAvatar = (comment.author || 'U').charAt(0).toUpperCase();
                         return (
                           <div key={index} className="flex gap-2.5 items-start text-xs bg-slate-900/60 p-3 rounded-2xl border border-white/5 shadow-sm">
                             <PlantAvatar username={comment.author} className="w-6 h-6 shrink-0" />

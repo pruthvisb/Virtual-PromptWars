@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useStore } from '../store/useStore';
 import { Coins, Check, Sparkles, Image, Shield, Frame, ShoppingBag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,7 +44,7 @@ export default function MarketplaceView() {
     ]
   };
 
-  const currentItems = storeItems[activeTab];
+  const currentItems = storeItems[activeTab] as { id: string; name: string; desc: string; cost: number; styleClass?: string; icon?: string; }[];
 
   const isOwned = (itemId: string, category: string) => {
     if (category === 'frames') return (profile.owned_frames || []).includes(itemId);

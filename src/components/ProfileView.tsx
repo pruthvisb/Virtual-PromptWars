@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useStore, getLevelNumber, getLevelName } from '../store/useStore';
 import { 
-  Award, Edit3, Flame, Trophy, Coins, Check, FileText, 
-  CheckCircle2, User, Clock, Leaf, Search, MessageSquare, 
-  Send, Paperclip, Plus, X, Image, Video, Users 
+  Award, Edit3, Flame, Trophy, Check, 
+  Clock, Search, MessageSquare, 
+  Send, Paperclip, X, Image, Video, Users 
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import PlantAvatar from './PlantAvatar';
 
 export default function ProfileView() {
   const profile = useStore((state) => state.profile);
+  const userEmail = useStore((state) => state.userEmail);
   const achievements = useStore((state) => state.achievements);
   const updateBio = useStore((state) => state.updateBio);
   const equipItem = useStore((state) => state.equipItem);
@@ -495,7 +495,7 @@ export default function ProfileView() {
                     <span className="text-[9px] font-bold text-slate-500 uppercase tracking-wide">Active Friends ({friends.length})</span>
                     <div className="flex flex-col gap-1.5">
                       {friends.map((friend) => {
-                        const email = friend.user_email === profile.email ? friend.friend_email : friend.user_email;
+                        const email = friend.user_email === userEmail ? friend.friend_email : friend.user_email;
                         const isSelected = selectedFriendEmail === email;
                         return (
                           <button
@@ -548,7 +548,7 @@ export default function ProfileView() {
                       {/* Messages List */}
                       <div className="flex-grow overflow-y-auto pr-1 flex flex-col gap-3 mb-3">
                         {activeChatMessages.map((msg) => {
-                          const isMe = msg.sender_email === profile.email;
+                          const isMe = msg.sender_email === userEmail;
                           const showImage = msg.media_url && msg.media_type === 'image';
                           const showVideo = msg.media_url && msg.media_type === 'video';
                           return (

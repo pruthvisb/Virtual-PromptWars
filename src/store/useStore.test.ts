@@ -23,7 +23,7 @@ const mocks = vi.hoisted(() => {
     writable: true
   });
 
-  const fMock = vi.fn().mockImplementation((url, init) => {
+  const fMock = vi.fn().mockImplementation((url, _init) => {
     const urlStr = String(url);
     
     if (urlStr.includes('/feed/post') || urlStr.includes('post.php')) {
@@ -287,6 +287,62 @@ describe('useStore Zustand Store', () => {
         banking_type: 'conventional' as const
       };
       expect(calculateFootprint(testProfile)).toBe(21.4);
+    });
+
+    it('should calculate correct footprint for a low-carbon vegan profile', () => {
+      const testProfile = {
+        username: 'EcoVegan',
+        bio: '',
+        level: 'Explorer',
+        xp: 350,
+        coins: 120,
+        streak: 5,
+        carbon_saved: 12,
+        equipped_frame: 'none',
+        equipped_theme: 'dark-green',
+        equipped_badge: 'Seedling',
+        owned_frames: [],
+        owned_themes: [],
+        owned_badges: [],
+        commute_mode: 'walk_bike' as const,
+        commute_km: 0,
+        diet_style: 'strict_vegan' as const,
+        home_size: 'apartment' as const,
+        energy_source: 'renewable' as const,
+        shopping_level: 'minimal' as const,
+        recycling_level: 'full' as const,
+        digital_hours: 'low' as const,
+        banking_type: 'green' as const
+      };
+      expect(calculateFootprint(testProfile)).toBe(3.42);
+    });
+
+    it('should calculate correct footprint for a high-carbon consumer profile', () => {
+      const testProfile = {
+        username: 'BigConsumer',
+        bio: '',
+        level: 'Beginner',
+        xp: 50,
+        coins: 10,
+        streak: 0,
+        carbon_saved: 0,
+        equipped_frame: 'none',
+        equipped_theme: 'dark-green',
+        equipped_badge: 'Seedling',
+        owned_frames: [],
+        owned_themes: [],
+        owned_badges: [],
+        commute_mode: 'gas_car' as const,
+        commute_km: 50,
+        diet_style: 'heavy_meat' as const,
+        home_size: 'house' as const,
+        energy_source: 'fossil' as const,
+        shopping_level: 'high' as const,
+        recycling_level: 'none' as const,
+        digital_hours: 'high' as const,
+        banking_type: 'conventional' as const
+      };
+      expect(calculateFootprint(testProfile)).toBe(40.7);
     });
 
     it('should update carbon twin and recalculate saved carbon', async () => {

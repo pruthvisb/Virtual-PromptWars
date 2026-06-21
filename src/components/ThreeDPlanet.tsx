@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useEffect } from 'react';
+import { useRef, useMemo, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import * as THREE from 'three';
@@ -118,7 +118,7 @@ function PlanetAssets({ completedAchievementsCount, xp }: { completedAchievement
 
   // Generate plant coordinates once
   const plants = useMemo(() => {
-    const list = [];
+    const list: { position: [number, number, number]; scale: number; color: string; }[] = [];
     let attempts = 0;
     
     while (list.length < plantCount && attempts < 1000) {

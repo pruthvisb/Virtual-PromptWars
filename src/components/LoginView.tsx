@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from '../firebase';
+import { auth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from '../firebase';
 import { Leaf, LogIn, UserPlus, Sparkles, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -28,42 +28,7 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
         // Firebase Login
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         
-        // Sync profile data from client-side Firestore
-        const { doc, getDoc } = await import('firebase/firestore');
-        const docRef = doc(db, 'profiles', email);
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          useStore.setState((state) => ({
-            profile: {
-              ...state.profile,
-              ...docSnap.data()
-            }
-          }));
-        } else {
-          // Fallback if auth exists but no profile document (e.g. legacy/incomplete register)
-          const newProfile = {
-            email,
-            username: email.split('@')[0],
-            bio: 'Protecting the planet, one habit at a time.',
-            level: 'Beginner',
-            xp: 120,
-            coins: 250,
-            streak: 1,
-            carbon_saved: 0.0,
-            equipped_frame: 'none',
-            equipped_theme: 'dark-green',
-            equipped_badge: 'Seedling',
-            owned_frames: ['none'],
-            owned_themes: ['dark-green'],
-            owned_badges: ['Seedling']
-          };
-          const { setDoc } = await import('firebase/firestore');
-          await setDoc(docRef, newProfile);
-          useStore.setState(() => ({
-            profile: newProfile
-          }));
-        }
-
+        
         setAuthenticated(true, userCredential.user.email);
         showToast(`Welcome back, Warden!`, 'success');
       } else {
@@ -75,31 +40,12 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
         }
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         
-        // Initialize user profile in Firestore
-        const newProfile = {
-          email,
-          username: username.trim() || 'Warden_Jane',
-          bio: 'Protecting the planet, one habit at a time.',
-          level: 'Beginner',
-          xp: 120,
-          coins: 250,
-          streak: 1,
-          carbon_saved: 0.0,
-          equipped_frame: 'none',
-          equipped_theme: 'dark-green',
-          equipped_badge: 'Seedling',
-          owned_frames: ['none'],
-          owned_themes: ['dark-green'],
-          owned_badges: ['Seedling']
-        };
-
-        const { doc, setDoc } = await import('firebase/firestore');
-        await setDoc(doc(db, 'profiles', email), newProfile);
-
-        useStore.setState(() => ({
-          profile: newProfile
-        }));
-
+        
+        if (username.trim()) {
+          useStore.setState((state) => ({
+            profile: { ...state.profile, username: username.trim() }
+          }));
+        }
         setAuthenticated(true, userCredential.user.email);
         showToast('Account initialized! Welcome to EcoVerse.', 'success');
       }

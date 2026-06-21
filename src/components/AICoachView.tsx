@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useStore, calculateFootprint } from '../store/useStore';
 import { Send, Sparkles, User, Cpu } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const isLocalHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 

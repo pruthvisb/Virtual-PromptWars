@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { Trophy, Coins, CheckCircle2, Circle, Star, CalendarDays, Zap } from 'lucide-react';
+import { Trophy, Coins, CheckCircle2, Circle, Star, CalendarDays } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function ChallengesView() {

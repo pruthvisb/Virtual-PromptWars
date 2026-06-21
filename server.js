@@ -24,15 +24,22 @@ if (!fs.existsSync(uploadsDir)) {
 
 app.use('/uploads', express.static(uploadsDir));
 
-// Load Service Account Credentials
-const serviceAccountPath = new URL('./firebase-service-account.json', import.meta.url);
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
-
-// Initialize Firebase Admin SDK
-initializeApp({
-  credential: cert(serviceAccount)
-});
-const db = getFirestore();
+// Initialize Firebase Admin SDK Safely
+let db = null;
+try {
+  const serviceAccountPath = new URL('./firebase-service-account.json', import.meta.url);
+  if (fs.existsSync(serviceAccountPath)) {
+    const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+    if (serviceAccount && serviceAccount.private_key && serviceAccount.private_key.includes('PRIVATE KEY')) {
+      initializeApp({
+        credential: cert(serviceAccount)
+      });
+      db = getFirestore();
+    }
+  }
+} catch (err) {
+  console.warn('Firebase Admin SDK could not initialize:', err.message);
+}
 
 // In-Memory Database Fallback
 let isDbConnected = false;

@@ -14,21 +14,8 @@ const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
 const API_BASE = 'http://localhost:5000/api';
 const PHP_API_BASE = 'http://localhost:8000';
 
-const syncProfileToFirestore = async (profile: any) => {
-  try {
-    if (profile && profile.email) {
-      const { doc, setDoc } = await import('firebase/firestore');
-      const { db } = await import('../firebase');
-      await setDoc(doc(db, 'profiles', profile.email), {
-        ...profile,
-        owned_frames: profile.owned_frames || ['none'],
-        owned_themes: profile.owned_themes || ['dark-green'],
-        owned_badges: profile.owned_badges || ['Seedling']
-      });
-    }
-  } catch (err) {
-    console.warn('Direct Firestore sync failed:', err);
-  }
+const syncProfileToFirestore = async (_profile: any) => {
+  // Database sync is handled server-side.
 };
 
 export interface Challenge {
@@ -344,32 +331,7 @@ export const useStore = create<StoreState>()(
           challengesRes = chal;
           analyticsRes = anal;
         } catch (err) {
-          console.warn('Node backend unreachable. Syncing with client-side Firestore...');
-          try {
-            const { doc, getDoc, collection, getDocs } = await import('firebase/firestore');
-            const { db } = await import('../firebase');
-            const email = get().userEmail || 'jane@ecoverse.com';
-            
-            // Fetch profile
-            const profSnap = await getDoc(doc(db, 'profiles', email));
-            if (profSnap.exists()) {
-              profileRes = profSnap.data();
-            }
-
-            // Fetch challenges
-            const chalSnap = await getDocs(collection(db, 'challenges'));
-            if (!chalSnap.empty) {
-              challengesRes = chalSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-            }
-
-            // Fetch analytics
-            const analSnap = await getDocs(collection(db, 'analytics'));
-            if (!analSnap.empty) {
-              analyticsRes = analSnap.docs.map(d => d.data());
-            }
-          } catch (fireErr) {
-            console.error('Firestore client-side fetch failed:', fireErr);
-          }
+          console.warn('Node backend unreachable. Falling back to local persisted workspace state.');
         }
 
         // 2. Fetch community feed from Node Express (with PHP/Local fallbacks)
@@ -379,24 +341,13 @@ export const useStore = create<StoreState>()(
           if (r.ok) feedRes = await r.json();
           else throw new Error();
         } catch (expressErr) {
-          console.warn('Express feed server unreachable, falling back to client-side Firestore...');
+          console.warn('Express feed server unreachable, falling back to local storage.');
           try {
-            const { collection, getDocs } = await import('firebase/firestore');
-            const { db } = await import('../firebase');
-            const feedSnap = await getDocs(collection(db, 'feed'));
-            if (!feedSnap.empty) {
-              feedRes = feedSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-            } else {
-              throw new Error();
-            }
-          } catch (fireErr) {
-            try {
-              const r = await fetch(`${PHP_API_BASE}/feed.php`);
-              if (r.ok) feedRes = await r.json();
-              else throw new Error();
-            } catch (phpErr) {
-              feedRes = get().socialPosts || [];
-            }
+            const r = await fetch(`${PHP_API_BASE}/feed.php`);
+            if (r.ok) feedRes = await r.json();
+            else throw new Error();
+          } catch (phpErr) {
+            feedRes = get().socialPosts || [];
           }
         }
 
@@ -407,36 +358,18 @@ export const useStore = create<StoreState>()(
           if (r.ok) leaderboardRes = await r.json();
           else throw new Error();
         } catch (expressErr) {
-          console.warn('Express leaderboard server unreachable, falling back to client-side Firestore...');
+          console.warn('Express leaderboard server unreachable, falling back to local storage.');
           try {
-            const { collection, getDocs } = await import('firebase/firestore');
-            const { db } = await import('../firebase');
-            const profilesSnap = await getDocs(collection(db, 'profiles'));
-            if (!profilesSnap.empty) {
-              const list = profilesSnap.docs.map(d => d.data());
-              // Sort descending by xp
-              list.sort((a: any, b: any) => (b.xp || 0) - (a.xp || 0));
-              leaderboardRes = list.map((u: any) => ({
-                username: u.username || 'Warden',
-                xp: u.xp || 0,
-                level: u.level || 'Beginner'
-              }));
-            } else {
-              throw new Error();
-            }
-          } catch (fireErr) {
-            try {
-              const r = await fetch(`${PHP_API_BASE}/leaderboard.php`);
-              if (r.ok) leaderboardRes = await r.json();
-              else throw new Error();
-            } catch (phpErr) {
-              leaderboardRes = [
-                { username: 'EcoWarrior_Sarah', xp: 980, level: 'Guardian' },
-                { username: 'GreenTransitBen', xp: 840, level: 'Guardian' },
-                { username: 'ZeroWasteAlex', xp: 760, level: 'Explorer' },
-                { username: get().profile?.username || 'Warden_Jane', xp: get().profile?.xp || 120, level: get().profile?.level || 'Beginner' }
-              ];
-            }
+            const r = await fetch(`${PHP_API_BASE}/leaderboard.php`);
+            if (r.ok) leaderboardRes = await r.json();
+            else throw new Error();
+          } catch (phpErr) {
+            leaderboardRes = [
+              { username: 'EcoWarrior_Sarah', xp: 980, level: 'Guardian' },
+              { username: 'GreenTransitBen', xp: 840, level: 'Guardian' },
+              { username: 'ZeroWasteAlex', xp: 760, level: 'Explorer' },
+              { username: get().profile?.username || 'Warden_Jane', xp: get().profile?.xp || 120, level: get().profile?.level || 'Beginner' }
+            ];
           }
         }
 
@@ -756,20 +689,6 @@ export const useStore = create<StoreState>()(
             return;
           }
         } catch (err) {
-          console.warn('PHP post offline, trying direct Firestore');
-        }
-
-        // Firestore direct client fallback
-        try {
-          const { doc, setDoc } = await import('firebase/firestore');
-          const { db } = await import('../firebase');
-          await setDoc(doc(db, 'feed', newPost.id), {
-            ...newPost,
-            applauders: []
-          });
-          await syncProfileToFirestore(get().profile);
-          get().showToast('Story broadcasted to cloud community!', 'success');
-        } catch (fireErr) {
           get().showToast('Story published in Local Storage.', 'success');
         }
       },

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useStore } from '../store/useStore';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,

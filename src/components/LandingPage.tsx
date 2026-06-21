@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Leaf, Flame, Trophy, Cpu, Users, ShieldCheck, ArrowRight, ChevronRight, HelpCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Leaf, Flame, Trophy, Cpu, Users, ShieldCheck, ArrowRight, ChevronRight } from 'lucide-react';
 
 interface LandingProps {
   onEnter: () => void;
