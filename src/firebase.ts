@@ -12,13 +12,13 @@ import {
 // Standard sandbox/placeholder config.
 // In development, this registers fine in the Firebase SDK.
 const firebaseConfig = {
-  apiKey: "VITE_FIREBASE_API_KEY_PLACEHOLDER",
-  authDomain: "ecoverse-fb7d7.firebaseapp.com",
-  projectId: "ecoverse-fb7d7",
-  storageBucket: "ecoverse-fb7d7.firebasestorage.app",
-  messagingSenderId: "1021133790919",
-  appId: "1:1021133790919:web:6719aa3f0ad7385ac968e2",
-  measurementId: "G-MS555M8C0Y"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
 
 // Initialize App
