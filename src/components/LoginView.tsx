@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useStore } from '../store/useStore';
-import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword } from '../firebase';
+import { auth, db, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail } from '../firebase';
 import { Leaf, LogIn, UserPlus, Sparkles, Mail, Lock, ShieldCheck, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -118,8 +118,21 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
       const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
       
       if (!isLocalHost || authErrors.includes(err.code)) {
-        // Block login on production web or on explicit auth credential failures
-        const readableError = err.message || 'Authentication failed. Please check your credentials.';
+        // Translate error code to clear user message
+        let readableError = 'Authentication failed. Please check your credentials.';
+        if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+          readableError = 'Incorrect password. Please try again.';
+        } else if (err.code === 'auth/user-not-found') {
+          readableError = 'No account found with this email.';
+        } else if (err.code === 'auth/invalid-email') {
+          readableError = 'Invalid email address format.';
+        } else if (err.code === 'auth/email-already-in-use') {
+          readableError = 'An account with this email already exists.';
+        } else if (err.code === 'auth/weak-password') {
+          readableError = 'Password is too weak. Must be at least 6 characters.';
+        } else if (err.message) {
+          readableError = err.message;
+        }
         showToast(readableError, 'error');
       } else {
         // Fallback ONLY for local offline development
@@ -136,6 +149,30 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
           showToast(readableError, 'error');
         }
       }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email.trim()) {
+      showToast('Please enter your email address to reset password.', 'error');
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, email);
+      showToast('Password reset link sent to your email!', 'success');
+    } catch (err: any) {
+      let readableError = 'Failed to send password reset email.';
+      if (err.code === 'auth/user-not-found') {
+        readableError = 'No account found with this email.';
+      } else if (err.code === 'auth/invalid-email') {
+        readableError = 'Invalid email address format.';
+      } else if (err.message) {
+        readableError = err.message;
+      }
+      showToast(readableError, 'error');
     } finally {
       setLoading(false);
     }
@@ -270,7 +307,17 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
           {/* Quick instructions text */}
           <div className="flex justify-between items-center text-[10px] text-slate-500 border-t border-white/5 pt-4 mt-6">
             <span className="flex items-center gap-1"><ShieldCheck className="w-3.5 h-3.5 text-emerald-400/80" /> Firebase Secured</span>
-            <span>Password length &ge; 6</span>
+            {isLogin ? (
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-cyan-400 hover:text-cyan-300 font-extrabold hover:underline cursor-pointer transition-all"
+              >
+                Forgot Password?
+              </button>
+            ) : (
+              <span>Password length &ge; 6</span>
+            )}
           </div>
 
         </div>
