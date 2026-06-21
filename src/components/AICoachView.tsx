@@ -3,6 +3,16 @@ import { useStore } from '../store/useStore';
 import { Send, Sparkles, User, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const isLocalHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+  const urlStr = typeof input === 'string' ? input : (input instanceof URL ? input.toString() : input.url);
+  if (!isLocalHost && (urlStr.includes('localhost:') || urlStr.includes('127.0.0.1:'))) {
+    throw new Error(`Bypassing local connection to ${urlStr} in production.`);
+  }
+  return window.fetch(input, init);
+};
+
 export default function AICoachView() {
   const chatHistory = useStore((state) => state.chatHistory);
   const isLoading = useStore((state) => state.isLoading);

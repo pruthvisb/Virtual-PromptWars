@@ -1,6 +1,16 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+const isLocalHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+
+const fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+  const urlStr = typeof input === 'string' ? input : (input instanceof URL ? input.toString() : input.url);
+  if (!isLocalHost && (urlStr.includes('localhost:') || urlStr.includes('127.0.0.1:'))) {
+    throw new Error(`Bypassing local connection to ${urlStr} in production.`);
+  }
+  return window.fetch(input, init);
+};
+
 const API_BASE = 'http://localhost:5000/api';
 const PHP_API_BASE = 'http://localhost:8000';
 
