@@ -168,7 +168,7 @@ export const getLevelNumber = (xp: number): number => {
 
 export const getLevelName = (lvl: number): string => {
   const levels = ['Beginner', 'Explorer', 'Guardian', 'Champion', 'Protector', 'Legend'];
-  return levels[Math.min(levels.length - 1, lvl - 1)];
+  return levels[Math.max(0, Math.min(levels.length - 1, lvl - 1))] || 'Beginner';
 };
 
 const defaultChallenges: Challenge[] = [
