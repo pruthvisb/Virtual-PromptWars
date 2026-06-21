@@ -164,11 +164,16 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
       await sendPasswordResetEmail(auth, email);
       showToast('Password reset link sent to your email!', 'success');
     } catch (err: any) {
+      console.error('Firebase Reset Password Error:', err.code, err.message, err);
       let readableError = 'Failed to send password reset email.';
       if (err.code === 'auth/user-not-found') {
         readableError = 'No account found with this email.';
       } else if (err.code === 'auth/invalid-email') {
         readableError = 'Invalid email address format.';
+      } else if (err.code === 'auth/too-many-requests') {
+        readableError = 'Too many requests. Please try again later.';
+      } else if (err.code === 'auth/network-request-failed') {
+        readableError = 'Network error. Please check your internet connection.';
       } else if (err.message) {
         readableError = err.message;
       }
