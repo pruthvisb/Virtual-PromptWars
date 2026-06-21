@@ -67,35 +67,7 @@ function getPDO() {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         )");
 
-        // SEEDING POSTGRESQL TABLES
-        $countProf = $pdo->query("SELECT COUNT(*) FROM profiles WHERE email IS NOT NULL")->fetchColumn();
-        if ($countProf == 0) {
-            $mocks = [
-                ['sarah@ecoverse.com', 'EcoWarrior_Sarah', 980, 'Guardian'],
-                ['ben@ecoverse.com', 'GreenTransitBen', 840, 'Guardian'],
-                ['alex@ecoverse.com', 'ZeroWasteAlex', 760, 'Explorer'],
-                ['dan@ecoverse.com', 'PlantPowerDan', 420, 'Beginner']
-            ];
-            foreach ($mocks as $m) {
-                $stmt = $pdo->prepare("INSERT INTO profiles (email, username, xp, level) VALUES ($1, $2, $3, $4) ON CONFLICT (email) DO NOTHING");
-                $stmt->execute($m);
-            }
-        }
-
-        $countFriends = $pdo->query("SELECT COUNT(*) FROM friends")->fetchColumn();
-        if ($countFriends == 0) {
-            $pdo->query("INSERT INTO friends (user_email, friend_email, status) VALUES ('sarah@ecoverse.com', 'jane@ecoverse.com', 'pending')");
-            $pdo->query("INSERT INTO friends (user_email, friend_email, status) VALUES ('jane@ecoverse.com', 'alex@ecoverse.com', 'accepted')");
-        }
-
-        $countDMs = $pdo->query("SELECT COUNT(*) FROM direct_messages")->fetchColumn();
-        if ($countDMs == 0) {
-            $pdo->prepare("INSERT INTO direct_messages (sender_email, receiver_email, message) VALUES ($1, $2, $3)")
-                ->execute(['alex@ecoverse.com', 'jane@ecoverse.com', 'Hi Warden Jane! I noticed your tree density grew today. Awesome job! 🌲']);
-            $pdo->prepare("INSERT INTO direct_messages (sender_email, receiver_email, message) VALUES ($1, $2, $3)")
-                ->execute(['jane@ecoverse.com', 'alex@ecoverse.com', 'Thanks Alex! Commuted by bicycle today to help plant those tree nodes!']);
-        }
-
+        // SEEDING POSTGRESQL TABLES (mock seeding disabled)
         return $pdo;
     } catch (PDOException $e) {
         // Silent fail, fallback to JSON
@@ -109,73 +81,10 @@ function readJsonDb() {
     if (!file_exists($json_db_file)) {
         // Seed initial data
         $initialData = [
-            'profiles' => [
-                ['username' => 'EcoWarrior_Sarah', 'xp' => 980, 'level' => 'Guardian', 'email' => 'sarah@ecoverse.com'],
-                ['username' => 'GreenTransitBen', 'xp' => 840, 'level' => 'Guardian', 'email' => 'ben@ecoverse.com'],
-                ['username' => 'ZeroWasteAlex', 'xp' => 760, 'level' => 'Explorer', 'email' => 'alex@ecoverse.com'],
-                ['username' => 'PlantPowerDan', 'xp' => 420, 'level' => 'Beginner', 'email' => 'dan@ecoverse.com']
-            ],
-            'feed' => [
-                [
-                    'id' => 1,
-                    'author' => 'EcoWarrior_Sarah',
-                    'avatar' => 'S',
-                    'avatar_bg' => '#10b981',
-                    'time' => date('c', strtotime('-2 hours')),
-                    'content' => 'Finished all my daily challenges! The morning active commute by bicycle was amazing 🚴‍♀️☀️',
-                    'applauds' => 12,
-                    'comments' => [],
-                    'applauders' => []
-                ],
-                [
-                    'id' => 2,
-                    'author' => 'GreenTransitBen',
-                    'avatar' => 'B',
-                    'avatar_bg' => '#06b6d4',
-                    'time' => date('c', strtotime('-5 hours')),
-                    'content' => 'Swapped my conventional household bank to a clean green ESG bank! Starving fossil fuel funding feels awesome. (+80 coins!) 🏦🌱',
-                    'applauds' => 7,
-                    'comments' => [],
-                    'applauders' => []
-                ],
-                [
-                    'id' => 3,
-                    'author' => 'ZeroWasteAlex',
-                    'avatar' => 'A',
-                    'avatar_bg' => '#8b5cf6',
-                    'time' => date('c', strtotime('-1 day')),
-                    'content' => 'Composted my kitchen scrap bin today. Reducing landfill methane yields positive impact indices! 🪱♻️',
-                    'applauds' => 15,
-                    'comments' => [
-                        ['author' => 'EcoWarrior_Sarah', 'text' => 'Amazing work, Alex!']
-                    ],
-                    'applauders' => []
-                ]
-            ],
-            'friends' => [
-                ['id' => 1, 'user_email' => 'sarah@ecoverse.com', 'friend_email' => 'jane@ecoverse.com', 'status' => 'pending'],
-                ['id' => 2, 'user_email' => 'jane@ecoverse.com', 'friend_email' => 'alex@ecoverse.com', 'status' => 'accepted']
-            ],
-            'direct_messages' => [
-                [
-                    'id' => 1,
-                    'sender_email' => 'alex@ecoverse.com',
-                    'receiver_email' => 'jane@ecoverse.com',
-                    'message' => 'Hi Warden Jane! I noticed your tree density grew today. Awesome job! 🌲',
-                    'media_url' => '',
-                    'media_type' => '',
-                    'created_at' => date('c', strtotime('-1 hour'))
-                ],
-                [
-                    'id' => 2,
-                    'sender_email' => 'jane@ecoverse.com',
-                    'receiver_email' => 'alex@ecoverse.com',
-                    'message' => 'Thanks Alex! Commuted by bicycle today to help plant those tree nodes!',
-                    'media_url' => '',
-                    'media_type' => '',
-                    'created_at' => date('c', strtotime('-30 minutes'))
-                ]
-            ]
+            'profiles' => [],
+            'feed' => [],
+            'friends' => [],
+            'direct_messages' => []
         ];
         file_put_contents($json_db_file, json_encode($initialData, JSON_PRETTY_PRINT));
     }
@@ -412,27 +321,6 @@ function getLeaderboard() {
             $stmt = $pdo->query("SELECT username, xp, level FROM profiles ORDER BY xp DESC LIMIT 10");
             $rows = $stmt->fetchAll();
             if (count($rows) > 0) {
-                // If there are less than 4 users, seed mock users so the leaderboard looks active
-                if (count($rows) < 4) {
-                    $seededNames = array_column($rows, 'username');
-                    $mocks = [
-                        ['username' => 'EcoWarrior_Sarah', 'xp' => 980, 'level' => 'Guardian'],
-                        ['username' => 'GreenTransitBen', 'xp' => 840, 'level' => 'Guardian'],
-                        ['username' => 'ZeroWasteAlex', 'xp' => 760, 'level' => 'Explorer']
-                    ];
-                    foreach ($mocks as $m) {
-                        if (!in_array($m['username'], $seededNames)) {
-                            // Seed into DB profiles
-                            $ins = $pdo->prepare("INSERT INTO profiles (username, xp, level) VALUES (:username, :xp, :level)");
-                            $ins->execute($m);
-                            $rows[] = $m;
-                        }
-                    }
-                    // Sort descending
-                    usort($rows, function($a, $b) {
-                        return $b['xp'] - $a['xp'];
-                    });
-                }
                 return $rows;
             }
         } catch (PDOException $e) {
