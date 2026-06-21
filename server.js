@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import express from 'express';
 import cors from 'cors';
 import fs from 'fs';
@@ -7,7 +8,6 @@ import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = 5000;
@@ -656,13 +656,19 @@ app.post('/api/ai/chat', async (req, res) => {
   const { message } = req.body;
   const msg = message.toLowerCase();
   
-  let reply = '';
+  let reply;
   if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey')) {
     reply = "Hello Warden! I am your EcoVerse AI Coach. Ask me about your habits, emissions tips, or how to maximize Eco Coins!";
   } else if (msg.includes('coin') || msg.includes('eco coin') || msg.includes('shop') || msg.includes('marketplace')) {
     reply = "You can earn Eco Coins by completing Daily/Weekly challenges. Spend your coins in the Market to buy animated avatar frames, glowing background themes, and customized profile badges!";
   } else if (msg.includes('xp') || msg.includes('level') || msg.includes('guardian')) {
     reply = "XP represents your progression. Every 300 XP levels you up. Levels include Explorer, Guardian, Protector, and Legend. Completed challenges and community posts earn you bonus XP!";
+  } else if (msg.includes('score') || msg.includes('footprint') || msg.includes('how am i doing') || msg.includes('audit') || msg.includes('twin')) {
+    reply = "Your current footprint baseline is 18.2 kg CO₂e/day, but with your active quests completed today, you have successfully saved emissions! Keep it up.";
+  } else if (msg.includes('highest') || msg.includes('emitter') || msg.includes('worst')) {
+    reply = "Your single largest carbon category is Conventional Transport Commuting. Consider walking, cycling, or public transit to wipe this out!";
+  } else if (msg.includes('bank') || msg.includes('finance') || msg.includes('money') || msg.includes('esg')) {
+    reply = "Conventional commercial banks represent the highest silent capital funders of oil/gas grids. Swapping your bank deposits to a clean green ESG bank will wipe out financed emissions!";
   } else if (msg.includes('habit') || msg.includes('reduce') || msg.includes('transport') || msg.includes('car')) {
     reply = "To reduce transport emissions, swap one daily fuel commute for public transit or active walking/cycling. This eliminates roughly 3.6 kg of carbon equivalents per trip!";
   } else {
@@ -928,7 +934,7 @@ app.post('/api/upload', async (req, res) => {
   }
 
   try {
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
+    const matches = fileData.match(new RegExp('^data:([A-Za-z-+/]+);base64,(.+)$'));
     if (!matches || matches.length !== 3) {
       return res.status(400).json({ error: 'Invalid base64 file data format' });
     }

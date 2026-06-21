@@ -9,11 +9,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 // Database Configuration
-define('DB_HOST', 'localhost');
-define('DB_PORT', '4000');
-define('DB_NAME', 'postgres');
-define('DB_USER', 'postgres');
-define('DB_PASS', 'postgres');
+define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
+define('DB_PORT', getenv('DB_PORT') ?: '4000');
+define('DB_NAME', getenv('DB_NAME') ?: 'postgres');
+define('DB_USER', getenv('DB_USER') ?: 'postgres');
+define('DB_PASS', getenv('DB_PASS') ?: '');
 
 $json_db_file = __DIR__ . '/community_data.json';
 

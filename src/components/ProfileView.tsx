@@ -540,7 +540,7 @@ export default function ProfileView() {
                             Transmissions: @{friends.find(f => f.user_email === selectedFriendEmail || f.friend_email === selectedFriendEmail)?.friend_name}
                           </span>
                         </div>
-                        <button onClick={() => setSelectedFriendEmail(null)} className="text-slate-500 hover:text-white">
+                        <button onClick={() => setSelectedFriendEmail(null)} className="text-slate-500 hover:text-white" aria-label="Close chat window">
                           <X className="w-4 h-4" />
                         </button>
                       </div>

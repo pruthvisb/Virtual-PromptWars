@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useStore } from '../store/useStore';
+import { useStore, calculateFootprint } from '../store/useStore';
 import { Send, Sparkles, User, Cpu } from 'lucide-react';
 import { motion } from 'framer-motion';
 
@@ -17,6 +17,7 @@ export default function AICoachView() {
   const chatHistory = useStore((state) => state.chatHistory);
   const isLoading = useStore((state) => state.isLoading);
   const showToast = useStore((state) => state.showToast);
+  const profile = useStore((state) => state.profile);
 
   const [inputText, setInputText] = useState('');
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -50,7 +51,19 @@ export default function AICoachView() {
       const res = await fetch('http://localhost:5000/api/ai/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text })
+        body: JSON.stringify({ 
+          message: text,
+          carbon_saved: profile.carbon_saved,
+          commute_mode: profile.commute_mode,
+          commute_km: profile.commute_km,
+          diet_style: profile.diet_style,
+          home_size: profile.home_size,
+          energy_source: profile.energy_source,
+          shopping_level: profile.shopping_level,
+          recycling_level: profile.recycling_level,
+          digital_hours: profile.digital_hours,
+          banking_type: profile.banking_type
+        })
       });
 
       if (!res.ok) throw new Error();
@@ -64,11 +77,13 @@ export default function AICoachView() {
       const lowMsg = text.toLowerCase();
       let reply = "Great question! Sustainability is built on simple daily actions like walk/bike transit commutes, plant-based meals, and digital cloud clearings.";
       
-      if (lowMsg.includes('score') || lowMsg.includes('footprint') || lowMsg.includes('how am i doing')) {
-        reply = "Your current footprint baseline is 18.2 kg CO₂e/day, but with your active quests completed today, you have successfully saved emissions! Keep it up.";
+      if (lowMsg.includes('score') || lowMsg.includes('footprint') || lowMsg.includes('how am i doing') || lowMsg.includes('audit') || lowMsg.includes('twin')) {
+        const total = calculateFootprint(profile);
+        const saved = profile.carbon_saved || 0.0;
+        reply = `Your current daily carbon footprint is ${total} kg CO₂e/day (Sustainable target is 8.0 kg). You have calibrated habits saving ${saved} kg CO₂e/day compared to your baseline twin. Keep optimizing!`;
       } else if (lowMsg.includes('highest') || lowMsg.includes('emitter') || lowMsg.includes('worst')) {
         reply = "Your single largest carbon category is Conventional Transport Commuting. Consider walking, cycling, or public transit to wipe this out!";
-      } else if (lowMsg.includes('bank') || lowMsg.includes('finance') || lowMsg.includes('money')) {
+      } else if (lowMsg.includes('bank') || lowMsg.includes('finance') || lowMsg.includes('money') || lowMsg.includes('esg')) {
         reply = "Conventional commercial banks represent the highest silent capital funders of oil/gas grids. Swapping your bank deposits to a clean green ESG bank will wipe out financed emissions!";
       }
 

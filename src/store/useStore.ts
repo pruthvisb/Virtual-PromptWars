@@ -87,6 +87,15 @@ export interface UserProfile {
   owned_frames: string[];
   owned_themes: string[];
   owned_badges: string[];
+  commute_mode?: 'gas_car' | 'ev' | 'public_transit' | 'walk_bike';
+  commute_km?: number;
+  diet_style?: 'heavy_meat' | 'balanced' | 'low_meat' | 'strict_vegan';
+  home_size?: 'apartment' | 'townhouse' | 'house';
+  energy_source?: 'fossil' | 'grid' | 'renewable';
+  shopping_level?: 'high' | 'average' | 'minimal';
+  recycling_level?: 'none' | 'partial' | 'full';
+  digital_hours?: 'low' | 'average' | 'high';
+  banking_type?: 'conventional' | 'balanced' | 'green';
 }
 
 interface StoreState {
@@ -155,6 +164,7 @@ interface StoreState {
   approveFriendRequest: (friendEmail: string) => Promise<void>;
   fetchDirectMessages: (friendEmail: string) => Promise<void>;
   sendDirectMessage: (friendEmail: string, message: string, mediaFile?: File) => Promise<void>;
+  updateCarbonTwin: (fields: Partial<UserProfile>) => Promise<void>;
 }
 
 // Level helper
@@ -200,6 +210,21 @@ const defaultAnalytics: AnalyticsRecord[] = [
   { year: 2029, emissions_avoided: 114.6, xp: 1850, challenge_completion: 34 }
 ];
 
+export const calculateFootprint = (p: UserProfile): number => {
+  const transCoeff = { gas_car: 0.18, ev: 0.04, public_transit: 0.05, walk_bike: 0.00 }[p.commute_mode || 'gas_car'];
+  const transEmissions = transCoeff * (p.commute_km ?? 15);
+  const dietEmissions = { heavy_meat: 7.2, balanced: 4.8, low_meat: 3.1, strict_vegan: 1.6 }[p.diet_style || 'balanced'];
+  const homeSizeCoeff = { apartment: 2.2, townhouse: 4.5, house: 7.0 }[p.home_size || 'townhouse'];
+  const energyMult = { fossil: 1.5, grid: 1.0, renewable: 0.1 }[p.energy_source || 'grid'];
+  const homeEmissions = homeSizeCoeff * energyMult;
+  const shoppingEmissions = { high: 6.2, average: 3.5, minimal: 1.2 }[p.shopping_level || 'average'];
+  const wasteEmissions = { none: 1.8, partial: 0.9, full: 0.1 }[p.recycling_level || 'partial'];
+  const digitalEmissions = { low: 0.1, average: 0.5, high: 1.5 }[p.digital_hours || 'average'];
+  const bankingEmissions = { conventional: 4.5, balanced: 1.8, green: 0.2 }[p.banking_type || 'conventional'];
+  const total = transEmissions + dietEmissions + homeEmissions + shoppingEmissions + wasteEmissions + digitalEmissions + bankingEmissions;
+  return parseFloat(total.toFixed(2));
+};
+
 const defaultProfile: UserProfile = {
   username: 'Warden_Jane',
   bio: 'Protecting the planet, one habit at a time.',
@@ -213,7 +238,16 @@ const defaultProfile: UserProfile = {
   equipped_badge: 'Seedling',
   owned_frames: ['none'],
   owned_themes: ['dark-green'],
-  owned_badges: ['Seedling']
+  owned_badges: ['Seedling'],
+  commute_mode: 'gas_car',
+  commute_km: 15,
+  diet_style: 'balanced',
+  home_size: 'townhouse',
+  energy_source: 'grid',
+  shopping_level: 'average',
+  recycling_level: 'partial',
+  digital_hours: 'average',
+  banking_type: 'conventional'
 };
 
 export const useStore = create<StoreState>()(
@@ -409,6 +443,15 @@ export const useStore = create<StoreState>()(
         // 4. Update the Zustand store state
         set((state) => {
           const updatedProfile = profileRes ? {
+            commute_mode: 'gas_car',
+            commute_km: 15,
+            diet_style: 'balanced',
+            home_size: 'townhouse',
+            energy_source: 'grid',
+            shopping_level: 'average',
+            recycling_level: 'partial',
+            digital_hours: 'average',
+            banking_type: 'conventional',
             ...state.profile,
             ...profileRes,
             owned_frames: profileRes.owned_frames || ['none'],
@@ -1127,6 +1170,24 @@ export const useStore = create<StoreState>()(
         } catch (err) {
           // Keep local mock message if server is offline
         }
+      },
+
+      updateCarbonTwin: async (fields) => {
+        set((state) => {
+          const nextProfile = { ...state.profile, ...fields };
+          const baseline = 21.4;
+          const current = calculateFootprint(nextProfile);
+          const saved = Math.max(0, parseFloat((baseline - current).toFixed(2)));
+          
+          const updatedProfile = {
+            ...nextProfile,
+            carbon_saved: saved
+          };
+          
+          syncProfileToFirestore(updatedProfile);
+          
+          return { profile: updatedProfile };
+        });
       }
     }),
     {

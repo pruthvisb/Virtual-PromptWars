@@ -78,6 +78,7 @@ export default function ChallengesView() {
                     className={`mt-1.5 transition-transform active:scale-90 cursor-pointer ${
                       isCompleted ? 'text-emerald-400' : 'text-slate-500 hover:text-emerald-400'
                     }`}
+                    aria-label={isCompleted ? `Challenge "${challenge.title}" completed` : `Complete challenge "${challenge.title}"`}
                   >
                     {isCompleted ? (
                       <CheckCircle2 className="w-6 h-6 stroke-[2.5] fill-emerald-500/10" />
