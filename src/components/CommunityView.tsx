@@ -169,7 +169,9 @@ export default function CommunityView() {
           </h3>
 
           <form onSubmit={handlePostSubmit} className="flex flex-col gap-3">
+            <label htmlFor="post-creator-input" className="sr-only">Post to Feed</label>
             <textarea
+              id="post-creator-input"
               value={postText}
               onChange={(e) => setPostText(e.target.value)}
               className="w-full bg-slate-950 border border-white/10 rounded-2xl p-4 text-xs text-slate-300 focus:outline-none focus:border-purple-500 resize-none h-28"
@@ -257,7 +259,9 @@ export default function CommunityView() {
                     </div>
 
                     <form onSubmit={(e) => handleCommentSubmit(e, post.id)} className="flex gap-2">
+                      <label htmlFor={`comment-input-${post.id}`} className="sr-only">Add comment</label>
                       <input
+                        id={`comment-input-${post.id}`}
                         type="text"
                         value={commentTexts[post.id] || ''}
                         onChange={(e) => setCommentTexts(prev => ({ ...prev, [post.id]: e.target.value }))}
