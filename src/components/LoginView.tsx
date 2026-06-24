@@ -62,8 +62,14 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
       ];
       
       const isLocalHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const isKeyOrNetworkError = 
+        err.code === 'auth/api-key-not-valid' || 
+        err.code === 'auth/network-request-failed' ||
+        String(err.code).includes('api-key') ||
+        String(err.message).includes('API key') ||
+        String(err.message).includes('api-key');
       
-      if (!isLocalHost || authErrors.includes(err.code)) {
+      if ((!isLocalHost && !isKeyOrNetworkError) || authErrors.includes(err.code)) {
         // Translate error code to clear user message
         let readableError = 'Authentication failed. Please check your credentials.';
         if (err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
@@ -81,7 +87,7 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
         }
         showToast(readableError, 'error');
       } else {
-        // Fallback ONLY for local offline development
+        // Fallback for offline development or configuration errors
         if (email.includes('@') && password.length >= 6) {
           setAuthenticated(true, email);
           if (!isLogin && username.trim()) {
@@ -89,7 +95,12 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
               profile: { ...state.profile, username: username.trim() }
             }));
           }
-          showToast(`Dev Session Initiated (Local Storage fallback).`, 'success');
+          showToast(
+            isKeyOrNetworkError 
+              ? 'Configuration error detected. Initiating offline Sandbox session.' 
+              : 'Dev Session Initiated (Local Storage fallback).', 
+            'success'
+          );
         } else {
           const readableError = err.message || 'Authentication failed. Make sure password is at least 6 characters.';
           showToast(readableError, 'error');
@@ -255,6 +266,26 @@ export default function LoginView({ onBack }: { onBack?: () => void }) {
               ) : (
                 <>Generate Profile <Sparkles className="w-4 h-4" /></>
               )}
+            </button>
+
+            <div className="relative flex py-2 items-center justify-center">
+              <div className="flex-grow border-t border-white/5"></div>
+              <span className="flex-shrink mx-4 text-[9px] text-slate-600 uppercase tracking-widest font-bold">Or</span>
+              <div className="flex-grow border-t border-white/5"></div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setAuthenticated(true, 'demo@ecoverse.com');
+                useStore.setState((state) => ({
+                  profile: { ...state.profile, username: 'Demo_Warden' }
+                }));
+                showToast('Demo Environment Initiated (Offline Mode).', 'info');
+              }}
+              className="w-full py-3 rounded-2xl bg-white/5 border border-white/10 text-slate-200 font-heading font-extrabold text-xs tracking-wider transition-all hover:bg-white/10 hover:border-white/20 cursor-pointer"
+            >
+              Access Demo Sandbox (Offline)
             </button>
           </form>
 
